@@ -7,6 +7,10 @@ import { AuthenticationError, ForbiddenError } from 'apollo-server-errors';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
+const checkAuth = (user: any) =>{
+    if (!user)  throw new AuthenticationError("Sessão expirada ou usuário não autenticado.");
+};
+
 // Função utiilitária para travar papéis (Roles)
 const verifyRole = (user: any, allowedRoles: string[]) => {
     if(!user) throw new AuthenticationError("Usuário não autenticado");
@@ -15,11 +19,22 @@ const verifyRole = (user: any, allowedRoles: string[]) => {
 
 export const resolvers = {
     Query: {
+        me: async (_: any, __: any, {db, user }: any ) =>{
+            checkAuth(user);
+            return await db.collection('users').findOne({_id: new ObjectId(user.id)});
+        },
         listProducts: async (_: any, __: any, {db}: any) => {
             return await db.collections('products').find().toArray();
         },
+        getProduct: async(_: any, { id }: any, { db }: any ) =>{
+            return await db.collection('products').findOne({_id: new ObjectId(id)});
+        },
         trackOrder: async (_: any, { order_id } : any, { db } : any) => {
             return await db.collections('orders').findOne({ _id: new ObjectId(order_id) });
+        },
+        getDashboardOrders: async (_: any, __: any, {db, user}: any ) =>{
+            if(!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Não autorizado");
+            return await db.collection.('orders').find().toArray();
         },
         getDashboardMetrics: async (_: any, __: any, { db, user } : any) => {
             verifyRole(user, ['ADMIN','EMPRESA']);
@@ -37,12 +52,12 @@ export const resolvers = {
     },
 
     Mutation: {
-        registerUser: async (_: any, { name, email, password_hash, role } : any, { db } : any) => {
+        registerUser: async (_: any, { name, email, password_hash, role, address } : any, { db } : any) => {
             const exists = await db.collections('users').findOne({ email });
             if(exists) throw new Error("E-mail já cadastrado");
 
             const hashedPassword = await bcrypt.hash(password_hash, 10);
-            await db.collections('users').insertOne({name, email, password_hash: hashedPassword, role});
+            await db.collections('users').insertOne({name, email, password_hash: hashedPassword, role, address});
             return "Usuário registrado com sucesso";
         },
 
@@ -54,13 +69,32 @@ export const resolvers = {
             return jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
         },
 
+        updateProfile: async (_: any, { name, address }: any, { db, user}: any) =>{
+            checkAuth(user);
+            await db.collection('users').updateOne(
+                {_id: new ObjectId(user.id)},
+                { $set: {name, address}}
+            );
+            return await db.collection('users').findOne({_id: new ObjectId(user.id)});
+        },
+
         createProduct: async (_: any, agrs: any, { db, user } : any) => {
             verifyRole(user, ['ADMIN','EMPRESA']);
             const result = await db.collections('products').insertOne(agrs);
             return { id: result.insertedId, ...agrs };
         },
 
+        updateProduct: async (_: any, {id, ...updateData }: any, { db, user }: any ) =>{
+            if (!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Acesso restrito.");
+            await db.collection('products').updateOne(
+                {_id: new ObjectId(id)},
+                {$set: {updateData}},
+            );
+            return await db.collection('products').findOne({_id: new ObjectId(id)});
+        },
+
         checkoutOrder: async (_: any, { items, total_price } : any, { db, user } : any) => { //verificar para usar payment_id
+            checkAuth(user);
             verifyRole(user, ['CLIENTE']);
 
             // Verificação de Estoque Atômica
@@ -71,8 +105,8 @@ export const resolvers = {
                 }  
             }
 
-            // Simulação de getway de pagamento aprovado
-            const payment_id = "PAY-GRAPHQL-9912";
+            // Simulação de gateway de pagamento aprovado (MercadoPago / PagSeguro)
+            const payment_id = "PAY-" + Math.floor(Math.random() * 1000000);
 
             // 2. Transação de Débito de Estoque
             for (const item of items) {
@@ -90,7 +124,7 @@ export const resolvers = {
                 payment_id,
                 driver_location: null,
                 created_at: new Date().toISOString()
-            },
+            }
 
             const result = await db.collections('orders').insertOne(newOrder);
             return { id: result.insertedId, ...newOrder };

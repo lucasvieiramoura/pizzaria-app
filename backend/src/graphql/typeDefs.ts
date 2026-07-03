@@ -45,6 +45,8 @@ export const typeDefs = gql`
         ingredients: [String!]!
     }
 
+    type Location { lat: Float! long: Float!}
+
     type Order {
         id: ID!
         client_id: ID!
@@ -56,8 +58,10 @@ export const typeDefs = gql`
         created_at: String!
     }
 
-    type CartItemOutput {
+    type CartItem{
         product_id: ID!
+        name: String
+        price: Float
         quantity: Int!
     }
 
@@ -66,10 +70,21 @@ export const typeDefs = gql`
         quantity: Int!
     }
 
+    input AddressInput{
+        cep: String!
+        street: String!
+        number: String!
+        lat: Float
+        long: Flot
+    }
+
     # Operaçãoes de Leitura (Substiu os GETs)
     type Query {
+        me: User!
         listProducts: [Product!]!
+        getProduct(id: ID!): Product!
         trackOrder(orderId: ID!): Order!
+        getDashboardOrders: [Order!]!
         getDashboardMetrics: DashboardMetrics!
     }
 
@@ -83,7 +98,9 @@ export const typeDefs = gql`
     type Mutation {
         registerUser(name: String!, email: String!, password_hash: String!, role: Role!): String!
         loginUser(email: String!, password_hash: String!): String!
+        updateProfile(name: String!, address: AddressInput!): User!
         createProduct(name: String!, price: Float!, stock_quantity: Int!, ingredients: [String!]!): Product!
+        updateProduct(id: ID!, name: String, price: Float, stock_quantity: Int, ingredients: [String!]!): Product!
         checkoutOrder(items: [CartItemInput!]!, total_price: Float!): Order!
         updateDriverLocation(orderId: ID!, lat: Float!, long: Float!): String!
         updateOrderStatus(orderId: ID!, status: OrderStatus!): String!
