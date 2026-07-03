@@ -8,3 +8,4 @@ node_modules/
  .flutter-plugins-dependencies
  .packages
  pubspec.lock
+ backend/.env
