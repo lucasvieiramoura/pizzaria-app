@@ -1,0 +1,10 @@
+node_modules/
+ .dart_tool/
+ .idea/
+ .vscode/
+ .DS_Store
+ build/
+ .flutter-plugins
+ .flutter-plugins-dependencies
+ .packages
+ pubspec.lock
