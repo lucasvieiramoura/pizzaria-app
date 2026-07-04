@@ -11,7 +11,7 @@ const LOGIN_MUTATION = gql`
 export function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loginUser] = userMutation(LOGIN_MUTATION);
+    const [loginUser] = useMutation(LOGIN_MUTATION);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
