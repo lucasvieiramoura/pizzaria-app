@@ -1,12 +1,11 @@
 name: Deploy to DigitalOcean
 on:
   push:
-    branches: [ main ] # Dispara o deploy sempre que houver um push na branch principal (main)
+    branches: [ main ]
 
   jobs: 
-    deploy:
+    build:
       runs-on: ubuntu-latest
-
       steps:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v1
