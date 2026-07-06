@@ -8,13 +8,9 @@ on:
       runs-on: ubuntu-latest
 
       steps:
-        - name : Checkout code
-          uses: actions/checkout@v4
-
-        - name: Deplou to DigitalOcean Droplet
-          uses: appleboy/ssh-action@master
-          with:
-            script: |
-              git pull origin main
-              cd backend && npm install && pm2 restart server
-              cd ../frontend && npm install && npm run build
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v1
+            with:
+              node-version: 24
+          - run npm ci
+          - run npm run test
