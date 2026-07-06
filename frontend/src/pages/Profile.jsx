@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { useQuery, useMutation, gql } from '@apollo/client';
+import { gql } from '@apollo/client/core';
+import { useMutation } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 
 const GET_ME = gql`
     query GetMe { me {name email address {cep street number }}}
 `;
 
 const UPDATE_PROFILE = gql`
-    mutation UpdateProfile($name: String!, $address: AddressInput!d) {
+    mutation UpdateProfile($name: String!, $address: AddressInput!) {
         updateProfile(name: $name, address: $address) { name }
     }
 `;

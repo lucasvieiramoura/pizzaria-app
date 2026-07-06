@@ -1,16 +1,28 @@
 import { useState } from "react";
-import { useMutation, gql } from '@apollo/client';
+import { gql } from '@apollo/client/core';
+import { useMutation } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 
-const REGISTER_MUATION = gql`
-    mutation: Register($name: String!, $email: String!, $password: String!, $role: Role!, $address: AddressInput! ){
-        registerUser(name: $name, email: $email, password_has: $password, role: $role, address: $address)
-    }
+const REGISTER_MUTATION = gql`
+  mutation Register(
+    $name: String!, 
+    $email: String!, 
+    $password: String!, 
+    $role: Role!,
+    $address: AddressInput!
+  ) {
+    registerUser(    
+      name: $name, 
+      email: $email, 
+      password_hash: $password, 
+      role: $role, 
+      address: $address
+    )
+  }
 `;
-
 export function Register() {
     const [formData, setFormData] = useState({name:'', email:'', password: '', role: 'CLIENTE', cep: '', street: '', number: ''});
-    const [registerUser, {loading}] = useMutation(REGISTER_MUATION);
+    const [registerUser, {loading}] = useMutation(REGISTER_MUTATION);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) =>{
@@ -18,7 +30,7 @@ export function Register() {
         try {
             await registerUser({ variables: {
                 name: formData.name, email: formData.email, password: formData.password, role: formData.role, 
-                address: { cep: formData.cep, street: formData.street, number: formData.number, lat: 0.0, long: 0.0}
+                address: { cep: formData.cep, street: formData.street, number: formData.number, lat: 0, long: 0}
             }});
             alert('Cadastro realizado com sucesso!');
             navigate('/login');

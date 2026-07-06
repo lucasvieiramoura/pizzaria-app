@@ -1,5 +1,6 @@
-import { useParms } from 'react-route-dom';
-import { useQuery, gql } from '@apollo/client';
+import { useParams } from 'react-router-dom';
+import { gql } from '@apollo/client/core';
+import { useQuery } from '@apollo/client/react';
 
 const TRACK_ORDER = gql`
     query Track($id: ID!) {
@@ -12,7 +13,7 @@ const TRACK_ORDER = gql`
 `;
 
 export function OrderStatus () {
-    const { id } = useParms();
+    const { id } = useParams();
     const { data, loading } = useQuery(TRACK_ORDER, { variables: {id}, pollInterval: 5000});
 
     if (loading) return <div className='text-white p-8'>Sincronizando status...</div>;

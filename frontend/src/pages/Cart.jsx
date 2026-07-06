@@ -1,4 +1,5 @@
-import { useMutation, gql } from '@apollo/client';
+import { gql } from '@apollo/client/core';
+import { useMutation } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -29,7 +30,7 @@ export function Cart({ cartItems, clearCart }){
     return (
         <div className='min-h-screen bg-gray-950 text-white p-6 max-w-2xl mx-auto'>
             <h2 className='text-2xl font-black text-orange-500 mb-6'>Seu Carinho</h2>
-            {cartItems.length === 0} ? <p className='text-gray-500'>Nenhum item adicionado no carrinho</p> :(
+            {cartItems.length === 0 ? <p className='text-gray-500'>Nenhum item adicionado no carrinho</p> :(
                 <div className='spcae-y-4'>
                     {cartItems.map((item, i) => (
                         <div key={i} className='flex justify-between bg-gray-900 p-4 rounded-xl border border-gray-800'>
@@ -48,7 +49,7 @@ export function Cart({ cartItems, clearCart }){
                         {loading ? 'Processando Pagamento...' : 'Pagar Agora'}
                     </button>
                 </div>
-            )
+            )}
         </div>
     );
 }

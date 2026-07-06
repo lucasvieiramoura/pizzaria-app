@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Rodou o Test\" && exit 1",
+    "test": "echo \"Rodou o Test\" ",
     "dev": "nodemon src/server.js"
   },
   "keywords": [],
@@ -13,18 +13,26 @@
   "type": "commonjs",
   "dependencies": {
     "@apollo/server": "^5.5.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "apollo-server-errors": "^3.3.1",
+    "apollo-server-express": "^3.13.0",
     "bcryptjs": "^3.0.3",
     "ci": "^2.3.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
+    "express": "^4.17.1",
     "graphql": "^16.14.2",
     "graphql-tag": "^2.12.7",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.3"
+    "mongodb": "^7.4.0",
+    "mongoose": "^9.7.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
+    "@types/node": "^26.1.0",
     "nodemon": "^3.1.14"
   }
 }

@@ -50,7 +50,7 @@ export const typeDefs = gql`
     type Order {
         id: ID!
         client_id: ID!
-        items: [CartItemOutput!]!
+        items: [CartItem!]!
         total_price: Float!
         statsus: OrderStatus!
         payment_id: String
@@ -75,7 +75,7 @@ export const typeDefs = gql`
         street: String!
         number: String!
         lat: Float
-        long: Flot
+        long: Float
     }
 
     # Operaçãoes de Leitura (Substiu os GETs)
@@ -96,7 +96,7 @@ export const typeDefs = gql`
 
     # Operações de Escrita (Substitui os POST, PUT e DELETE)
     type Mutation {
-        registerUser(name: String!, email: String!, password_hash: String!, role: Role!): String!
+        registerUser(name: String!, email: String!, password_hash: String!, role: Role!, address: AddressInput): String!
         loginUser(email: String!, password_hash: String!): String!
         updateProfile(name: String!, address: AddressInput!): User!
         createProduct(name: String!, price: Float!, stock_quantity: Int!, ingredients: [String!]!): Product!

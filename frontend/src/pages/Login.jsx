@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
+import { gql } from '@apollo/client/core';
+import { useMutation } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 
 const LOGIN_MUTATION = gql`

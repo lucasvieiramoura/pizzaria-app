@@ -1,4 +1,5 @@
-import { useQuery, gql } from '@apollo/client';
+import { gql } from '@apollo/client/core';
+import { useQuery } from '@apollo/client/react';
 
 const LIST_PRODUCTS = gql`
     query ListProducts {
