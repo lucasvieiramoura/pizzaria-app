@@ -34,7 +34,7 @@ export const resolvers = {
         },
         getDashboardOrders: async (_: any, __: any, {db, user}: any ) =>{
             if(!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Não autorizado");
-            return await db.collection.('orders').find().toArray();
+            return await db.collections('orders').find().toArray();
         },
         getDashboardMetrics: async (_: any, __: any, { db, user } : any) => {
             verifyRole(user, ['ADMIN','EMPRESA']);
