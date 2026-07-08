@@ -16,7 +16,7 @@ const CREATE_PRODUCT = gql`
 
 const UPDATE_PRODUCT = gql`
   mutation UpdateProduct($id: ID!, $name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!){
-    updateProduct(id: $id, name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id name stock_quantity }
+    updateProduct(id: $id, name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id name price stock_quantity }
   }
 `;
 
@@ -71,25 +71,10 @@ export function AdminProducts() {
         setEditingProductId(p.id);
         setFormData({
             name: p.name,
-            price: p.price.toString(),
-            stock_quantity: p.stock_quantity.toString(),
+            price: p.price,
+            stock_quantity: p.stock_quantity,
             ingredients: p.ingredients ? p.ingredients.join(', ') : ''
         });
-    };
-
-    const handleStockUpdate = async (id, currentStock) => {
-        const nextStock = prompt("Defina a nova quantidade em estoque:", currentStock);
-        if (nextStock !== null && nextStock !== '') {
-            await updateProduct({
-                variables: {
-                    id,
-                    // Para mutations de atualização parcial, o GraphQL exige os outros campos obrigatórios.
-                    // Se der erro aqui, o ideal é usar o handleEditClick para alterar o estoque pelo form principal!
-                    stock_quantity: parseInt(nextStock, 10)
-                }
-            });
-            refetch();
-        }
     };
 
     const handleCancel = () => {
@@ -105,7 +90,6 @@ export function AdminProducts() {
                     {editingProductId ? 'Editar Produto / Pizza' : 'Adicionar Novo Produto / Pizza'}
                 </h2>
                 
-                {/* 💡 CORREÇÃO: Todos os inputs agora usam 'value' e alteram o 'formData' */}
                 <input 
                     type="text" 
                     placeholder="Nome" 
@@ -163,17 +147,8 @@ export function AdminProducts() {
                         <div key={p.id} className="flex justify-between items-center bg-gray-800 p-3 rounded-xl gap-2">
                             <span className="flex-1 truncate">{p.name} - R$: {p.price} - (Qtd: {p.stock_quantity})</span>
                             <div className="flex gap-2">
-                                <button 
-                                    onClick={() => handleEditClick(p)}
-                                    className="bg-orange-600 text-xs px-3 py-2 rounded-lg font-semibold hover:bg-orange-700"
-                                >
-                                    Editar Tudo
-                                </button>
-                                <button 
-                                    onClick={() => handleStockUpdate(p.id, p.stock_quantity)} 
-                                    className="bg-blue-600 text-xs px-3 py-2 rounded-lg font-semibold hover:bg-blue-700"
-                                >
-                                    Alterar Estoque
+                                <button onClick={() => handleEditClick(p)} className="bg-orange-600 text-xs px-3 py-2 rounded-lg font-semibold hover:bg-orange-700">
+                                    Editar Tudo 
                                 </button>
                             </div>
                         </div>

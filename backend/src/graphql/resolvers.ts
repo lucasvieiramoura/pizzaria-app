@@ -1,5 +1,5 @@
 require('dotenv').config();
-import { ObjectId } from "mongodb";
+import { ObjectId, ReturnDocument } from "mongodb";
 import bcrypt  from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AuthenticationError, ForbiddenError } from 'apollo-server-errors';
@@ -96,13 +96,23 @@ export const resolvers = {
             return { id: result.insertedId, ...agrs };
         },
 
-        updateProduct: async (_: any, {id, ...updateData }: any, { db, user }: any ) =>{
+        updateProduct: async (_: any, {id,name, price, stock_quantity, ingredients }: any, { db, user }: any ) =>{
             if (!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Acesso restrito.");
-            await db.collection('products').updateOne(
+            const result = await db.collection('products').findOneAndUpdate(
                 {_id: new ObjectId(id)},
-                {$set: {updateData}},
+                {$set: {
+                    name,
+                    price: parseFloat(price),
+                    stock_quantity: parseInt(stock_quantity,10),
+                    ingredients
+                }},
+                {ReturnDocument: 'after'}
             );
-            return await db.collection('products').findOne({_id: new ObjectId(id)});
+
+            if(result.matchedCount === 0){
+                throw new Error('Produto não encontado no banco de dados');
+            }
+            return { ...result, id: result._id.toString() };
         },
 
         checkoutOrder: async (_: any, { items, total_price } : any, { db, user } : any) => { //verificar para usar payment_id
