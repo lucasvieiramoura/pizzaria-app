@@ -13,17 +13,17 @@ export function Cart({ cartItems, clearCart }){
     const [checkoutOrder, {loading}] = useMutation(CHECKOUT_MUTATION);
     const navigate = useNavigate();
 
-    const total = cartItems.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
+    const total  = cartItems.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
 
     const handlePayment = async () => {
         if (cartItems.length === 0) return alert('Seu carrinho está vazio');
 
         try {
-            const itemsPayload = cartItems.map(item => ({ product_id: item.id || item.product_id, quantity: parseInt(item.quanitty || item.qtd || 1, 10)}));
-        
-            const { data } = await checkoutOrder({ variables: { items: itemsPayload, total }});
+            const itemsPayload = cartItems.map(item => ({ product_id: item.id || item.product_id, quantity: parseInt(item.quantity || item.qtd)}));
+            //const totalFloat = parseFloat(total);
+            const { data } = await checkoutOrder({ variables: { items: itemsPayload,  total }});
             clearCart();
-            alert('Pagamento integrado aprovadoo!');
+            alert('Pagamento integrado aprovado!');
             navigate(`/status/${data.checkoutOrder.id}`);
         } catch (err) { alert(err.message);}
     };

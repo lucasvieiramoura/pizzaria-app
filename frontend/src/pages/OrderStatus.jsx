@@ -4,9 +4,13 @@ import { useQuery } from '@apollo/client/react';
 
 const TRACK_ORDER = gql`
     query Track($id: ID!) {
-        trackOrder(id: $id) {   
-              
+        trackOrder(id: $id) {                
             status
+            total_price
+            driver_location {
+                lat
+                long
+            }
         }
     }
 `;
@@ -29,6 +33,7 @@ export function OrderStatus() {
 
                 <div className='py-4'>
                     <p className='text-sm text-gray-400 mb-1'>Status Atual: {order?.status}</p>
+                    <p className='text-sm text-gray-400 mb-1'>Total: R$ {order?.total_price.toFixed(2)}</p>
                 </div>
 
                 <div className='bg-gray-800 p-4 roudend-xl text-left text-sm text-gray-300'>

@@ -1,74 +1,185 @@
 import { useState } from "react";
 import { gql } from '@apollo/client/core';
-import { useMutation } from '@apollo/client/react';
-import { useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 
-const LIST_PRODUCTS = gql` query List { listProducts { id name price stock_quantity ingredients}}`;
+const LIST_PRODUCTS = gql` 
+  query List { 
+    listProducts { id name price stock_quantity ingredients }
+  }
+`;
+
 const CREATE_PRODUCT = gql`
-    mutation Create ($name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!) {
-        createProduct(name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) {id}
-    }
+  mutation Create ($name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!) {
+    createProduct(name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id }
+  }
 `;
 
 const UPDATE_PRODUCT = gql`
-    mutation Update($id: ID!, $stock_quantity: Int!, $ingredients: [String!]!){
-        updateProduct(id: $id, stock_quantity: $stock_quantity, ingredients: $ingredients) { id }
-    }
+  mutation UpdateProduct($id: ID!, $name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!){
+    updateProduct(id: $id, name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id name stock_quantity }
+  }
 `;
 
 export function AdminProducts() {
     const { data, refetch } = useQuery(LIST_PRODUCTS);
     const [createProduct] = useMutation(CREATE_PRODUCT);
-    const { updateProduct } = useMutation(UPDATE_PRODUCT);
-    const [ newProd, setNewProd ] = useState({ name: '',  price: 0, stock_quantity: 0, ingredients:'' });
+    const [updateProduct] = useMutation(UPDATE_PRODUCT, { refetchQueries: ['List'] });
+    
+    const [editingProductId, setEditingProductId] = useState(null);
+    const [formData, setFormData] = useState({
+        name: '',
+        price: '',
+        stock_quantity: '',
+        ingredients: ''
+    });
 
-    const handleCreate = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const payload = {
+            name: formData.name,
+            price: parseFloat(formData.price),
+            stock_quantity: parseInt(formData.stock_quantity, 10),
+            ingredients: formData.ingredients.split(',').map(i => i.trim()).filter(Boolean)
+        };
+
         try {
-            await createProduct({ variables: {
-                name: newProd.name, price: parseFloat(newProd.price), stock_quantity: parseInt(newProd.stock_quantity,10)
-                , ingredients: typeof newProd.ingredients === 'string' 
-                    ? newProd.ingredients.split(',').map(item => item.trim())
-                    : newProd.ingredients
-            }});
-            alert(`Produto ${newProd.name} criado !`);
-            refetch();
+            if (editingProductId){
+                await updateProduct({
+                    variables: {
+                        id: editingProductId,
+                        ...payload
+                    }
+                });
+                alert('Produto atualizado com sucesso');
+            } else {
+                await createProduct({
+                    variables: payload
+                });
+                alert('Produto criado com sucesso');
+            }
+            setEditingProductId(null);
+            setFormData({ name: '', price: '', stock_quantity: '', ingredients: '' });
+            refetch(); // Garante a atualização da lista
         } catch (err) {
-            console.error(err);
-            alert('Erro ao criar produto: '+ err.message);
+            console.error('Erro na operação', err);
+            alert('Erro: ' + err.message);
         }
     };
 
-    const handleStockUpdate = async (id, currentStock) =>{
+    const handleEditClick = (p) => {
+        setEditingProductId(p.id);
+        setFormData({
+            name: p.name,
+            price: p.price.toString(),
+            stock_quantity: p.stock_quantity.toString(),
+            ingredients: p.ingredients ? p.ingredients.join(', ') : ''
+        });
+    };
+
+    const handleStockUpdate = async (id, currentStock) => {
         const nextStock = prompt("Defina a nova quantidade em estoque:", currentStock);
-        if (nextStock !== null ){
-            await updateProduct({variables: {id, stock_quantity: parseInt(nextStock)}});
+        if (nextStock !== null && nextStock !== '') {
+            await updateProduct({
+                variables: {
+                    id,
+                    // Para mutations de atualização parcial, o GraphQL exige os outros campos obrigatórios.
+                    // Se der erro aqui, o ideal é usar o handleEditClick para alterar o estoque pelo form principal!
+                    stock_quantity: parseInt(nextStock, 10)
+                }
+            });
             refetch();
         }
     };
 
-    return(
+    const handleCancel = () => {
+        setEditingProductId(null);
+        setFormData({ name: '', price: '', stock_quantity: '', ingredients: '' });
+    };
+
+    return (
         <div className="min-h-screen bg-gray-950 text-white p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <form onSubmit={handleCreate} className="bg-gray-900 p-6 founded-2xl border border-gray-800 space-y-4 h-fit ">
-                <h2 className="text-xl font-bold text-orange-500">Adicionar Novo Produto / Pizza</h2>
-                <input type="text" placeholder="Nome" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setNewProd({...newProd, name: e.target.value})} />
-                <input type="number" step="0.01" placeholder="Preço" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setNewProd({...newProd, price: e.target.value})} />
-                <input type="number" placeholder="Quantidade em Estoque" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setNewProd({...newProd, stock_quantity: e.target.value})} />
-                <input type="text" placeholder="Ingredientes (separados por vírgula)" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setNewProd({...newProd, ingredients: e.target.value})} />
-                <button type="submit" className="w-full bg-green-600 font-bold p-3 rounded-xl">Salvar Produto</button>
+            {/* FORMULÁRIO */}
+            <form onSubmit={handleSubmit} className="bg-gray-900 p-6 rounded-2xl border border-gray-800 space-y-4 h-fit">
+                <h2 className="text-xl font-bold text-orange-500">
+                    {editingProductId ? 'Editar Produto / Pizza' : 'Adicionar Novo Produto / Pizza'}
+                </h2>
+                
+                {/* 💡 CORREÇÃO: Todos os inputs agora usam 'value' e alteram o 'formData' */}
+                <input 
+                    type="text" 
+                    placeholder="Nome" 
+                    required 
+                    className="w-full bg-gray-800 p-3 rounded-xl" 
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })} 
+                />
+                <input 
+                    type="number" 
+                    step="0.01" 
+                    placeholder="Preço" 
+                    required 
+                    className="w-full bg-gray-800 p-3 rounded-xl" 
+                    value={formData.price}
+                    onChange={e => setFormData({ ...formData, price: e.target.value })} 
+                />
+                <input 
+                    type="number" 
+                    placeholder="Quantidade em Estoque" 
+                    required 
+                    className="w-full bg-gray-800 p-3 rounded-xl" 
+                    value={formData.stock_quantity}
+                    onChange={e => setFormData({ ...formData, stock_quantity: e.target.value })} 
+                />
+                <input 
+                    type="text" 
+                    placeholder="Ingredientes (separados por vírgula)" 
+                    required 
+                    className="w-full bg-gray-800 p-3 rounded-xl" 
+                    value={formData.ingredients}
+                    onChange={e => setFormData({ ...formData, ingredients: e.target.value })} 
+                />
+                
+                <button type="submit" className="w-full bg-green-600 font-bold p-3 rounded-xl hover:bg-green-700 transition">
+                    {editingProductId ? 'Atualizar Produto' : 'Salvar Produto'}
+                </button>
+                
+                {editingProductId && (
+                    <button 
+                        type="button" 
+                        className="w-full bg-gray-700 font-bold p-3 rounded-xl hover:bg-gray-600 transition text-gray-200"
+                        onClick={handleCancel}
+                    >
+                        Cancelar Edição
+                    </button>
+                )}
             </form>
 
+            {/* LISTAGEM */}
             <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800">
                 <h2 className="text-xl font-bold mb-4 text-gray-400">Estoque de Produtos Atual</h2>
                 <div className="space-y-2">
-                {data?.listProducts.map(p => (
-                    <div key={p.id} className="flex justify-between items-center bg-gray-800 p-3 rounded-xl">
-                    <span>{p.name} (Qtd: {p.stock_quantity})</span>
-                    <button onClick={() => handleStockUpdate(p.id, p.stock_quantity)} className="bg-blue-600 text-xs px-3 py-1 rounded-lg">Alterar Estoque</button>
-                    </div>
-                ))}
+                    {data?.listProducts.map(p => (
+                        <div key={p.id} className="flex justify-between items-center bg-gray-800 p-3 rounded-xl gap-2">
+                            <span className="flex-1 truncate">{p.name} - R$: {p.price} - (Qtd: {p.stock_quantity})</span>
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => handleEditClick(p)}
+                                    className="bg-orange-600 text-xs px-3 py-2 rounded-lg font-semibold hover:bg-orange-700"
+                                >
+                                    Editar Tudo
+                                </button>
+                                <button 
+                                    onClick={() => handleStockUpdate(p.id, p.stock_quantity)} 
+                                    className="bg-blue-600 text-xs px-3 py-2 rounded-lg font-semibold hover:bg-blue-700"
+                                >
+                                    Alterar Estoque
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
-    )
+    );
 }

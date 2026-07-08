@@ -39,17 +39,6 @@ export const resolvers = {
         getProduct: async(_: any, { id }: any, { db }: any ) =>{
             return await db.collection('products').findOne({_id: new ObjectId(id)});
         },
-        /*trackOrder: async (_: any, { id } :  any, { db } :  any, ) => {
-            const order = await db.collection('orders').findOne({ _id: new ObjectId(id) });
-            if(!order){
-                throw new Error("Pedido não encontrado");
-            }
-
-            return {
-                ...order,
-                id: order._id.toString()
-            };
-        },*/
         
         trackOrder: async (_: any, { id } : any, { db } : any) => {
             return await db.collection('orders').findOne({ _id: new ObjectId(id) });

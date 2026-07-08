@@ -28,6 +28,12 @@ export default function App() {
 
   return (
     <BrowserRouter>
+    {!hasToken && (
+        <nav className="bg-gray-900 border-b border-gray-800 p-4 flex gap-4 text-sm font-semibold text-gray-300">
+          <Link to="/home" className="hover:text-orange-500">🍕 Cardápio</Link>
+          <Link to="/login" className="hover:text-orange-500">👤 Login</Link>
+        </nav>
+      )}
       {hasToken && (
         <nav className="bg-gray-900 border-b border-gray-800 p-4 flex gap-4 text-sm font-semibold text-gray-300">
           <Link to="/home" className="hover:text-orange-500">🍕 Cardápio</Link>
