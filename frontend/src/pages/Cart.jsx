@@ -19,7 +19,8 @@ export function Cart({ cartItems, clearCart }){
         if (cartItems.length === 0) return alert('Seu carrinho está vazio');
 
         try {
-            const itemsPayload = cartItems.map(item => ({ product_id: item.id, quantity: item.quanitty}));
+            const itemsPayload = cartItems.map(item => ({ product_id: item.id || item.product_id, quantity: parseInt(item.quanitty || item.qtd || 1, 10)}));
+        
             const { data } = await checkoutOrder({ variables: { items: itemsPayload, total }});
             clearCart();
             alert('Pagamento integrado aprovadoo!');

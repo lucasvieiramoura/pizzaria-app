@@ -39,8 +39,21 @@ export const resolvers = {
         getProduct: async(_: any, { id }: any, { db }: any ) =>{
             return await db.collection('products').findOne({_id: new ObjectId(id)});
         },
-        trackOrder: async (_: any, { order_id } : any, { db } : any) => {
-            return await db.collection('orders').findOne({ _id: new ObjectId(order_id) });
+        /*trackOrder: async (_: any, { id } :  any, { db } :  any, ) => {
+            const order = await db.collection('orders').findOne({ _id: new ObjectId(id) });
+            if(!order){
+                throw new Error("Pedido não encontrado");
+            }
+
+            return {
+                ...order,
+                id: order._id.toString()
+            };
+        },*/
+        
+        trackOrder: async (_: any, { id } : any, { db } : any) => {
+            return await db.collection('orders').findOne({ _id: new ObjectId(id) });
+
         },
         getDashboardOrders: async (_: any, __: any, {db, user}: any ) =>{
             if(!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Não autorizado");
@@ -160,5 +173,5 @@ export const resolvers = {
     },
     Product: {
         id: (parent: { _id: any }) => parent._id.toString()
-    }
+    },
 };

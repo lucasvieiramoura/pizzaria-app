@@ -52,7 +52,7 @@ export const typeDefs = gql`
         client_id: ID!
         items: [CartItem!]!
         total_price: Float!
-        statsus: OrderStatus!
+        status: OrderStatus!
         payment_id: String
         driver_location: Location
         created_at: String!
@@ -83,7 +83,7 @@ export const typeDefs = gql`
         me: User!
         listProducts: [Product!]!
         getProduct(id: ID!): Product!
-        trackOrder(orderId: ID!): Order!
+        trackOrder(id: ID!): Order!
         getDashboardOrders: [Order!]!
         getDashboardMetrics: DashboardMetrics!
     }
