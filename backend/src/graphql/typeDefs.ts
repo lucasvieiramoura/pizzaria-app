@@ -84,6 +84,7 @@ export const typeDefs = gql`
         listProducts: [Product!]!
         getProduct(id: ID!): Product!
         trackOrder(id: ID!): Order!
+        listOrders: [Order!]!
         getDashboardOrders: [Order!]!
         getDashboardMetrics: DashboardMetrics!
     }

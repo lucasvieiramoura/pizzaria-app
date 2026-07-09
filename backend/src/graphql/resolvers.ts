@@ -44,6 +44,14 @@ export const resolvers = {
             return await db.collection('orders').findOne({ _id: new ObjectId(id) });
 
         },
+        listOrders: async (_:any, _agrs: any, {db}:{db :any}) =>{
+            const orders = await db.collection('orders').find().sort({_createdAt: -1}).toArray();
+
+            return orders.map((order:any) =>({
+                ...order,
+                id: order._id.toString()
+            }));
+        },
         getDashboardOrders: async (_: any, __: any, {db, user}: any ) =>{
             if(!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Não autorizado");
             return await db.collection('orders').find().toArray();
@@ -163,11 +171,16 @@ export const resolvers = {
 
         updateOrderStatus: async (_: any, { orderId, status } : any, { db, user } : any) => {
             verifyRole(user, ['ADMIN','EMPRESA']);
-            await db.collection('orders').updateOne(
+            const result = await db.collection('orders').findOneAndUpdate(
                 { _id: new ObjectId(orderId) },
-                { $set: { status } }
+                { $set: { status } },
+                { ReturnDocument: 'after'}
             );  
-            return "Status do pedido atualizado com sucesso";
+
+            if(result.matchedCount === 0){
+                throw new Error('Pedido não encontrado');
+            }            
+            return status;
         }
     },
     Product: {

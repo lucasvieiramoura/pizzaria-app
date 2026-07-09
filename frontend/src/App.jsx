@@ -8,6 +8,7 @@ import { AdminProducts } from './pages/AdminProducts';
 import { Cart } from './pages/Cart';
 import { OrderStatus } from './pages/OrderStatus';
 import { Profile } from './pages/Profile';
+import { AdminOrders } from './pages/AdminOrders';
 
 export default function App() {
   const [cart, setCart] = useState([]);
@@ -53,6 +54,7 @@ export default function App() {
         <Route path="/status/:id" element={<OrderStatus />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Navigate to={hasToken ? "/home" : "/login"} />} />
+        <Route path="/admin/pedidos" element={<AdminOrders />} />
       </Routes>
     </BrowserRouter>
   );
