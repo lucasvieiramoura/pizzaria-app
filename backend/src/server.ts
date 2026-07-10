@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import { typeDefs } from './graphql/typeDefs';
 import { resolvers } from './graphql/resolvers';
+import path from 'path';
 
 const MONGO_URI = process.env.MONGO_URI!;
 const SECRET_KEY = process.env.SECRET_KEY!;
@@ -15,6 +16,7 @@ async function startServer() {
 
   app.use(cors());
   app.use(express.json());
+  app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
   // 1. Conexão com o MongoDB
   const client = new MongoClient(MONGO_URI);

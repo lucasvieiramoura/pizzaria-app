@@ -4,8 +4,17 @@ import bcrypt  from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AuthenticationError, ForbiddenError } from 'apollo-server-errors';
 
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
+import path from 'path';
 
 const SECRET_KEY = process.env.SECRET_KEY ?? '';
+
+cloudinary.config({
+    cloud_name:'seu_cloud_name',
+    api_key: 'seu_api_key',
+    api_secret: 'seu_api_secret'
+});
 
 const checkAuth = (user: any) =>{
     if (!user)  throw new AuthenticationError("Sessão expirada ou usuário não autenticado.");
@@ -34,7 +43,8 @@ export const resolvers = {
 
             return products.map((product: { _id: any; [key: string]: any}) => ({
                 ...product,
-                id: product._id.toString()
+                id: product._id.toString(),
+                foto_url: product.foto_url
             }));
         },
         getProduct: async(_: any, { id }: any, { db }: any ) =>{
@@ -132,6 +142,97 @@ export const resolvers = {
                 throw new Error('Produto não encontado no banco de dados');
             }
             return { ...result, id: result._id.toString() };
+        },
+
+        uploadProductImage: async (_: any, { id, base64Image }: any, { db, user }: any) => {
+            if (!user || user.role !== 'ADMIN') {
+                throw new Error("Não autorizado. Operação restrita a administradores.");
+            }
+            
+            try {
+                if (!base64Image) throw new Error("Nenhuma string de imagem recebida");
+
+            const limpoBase64 = base64Image.includes(',') 
+                ? base64Image.split(',')[1] 
+                : base64Image;
+
+            const buffer = Buffer.from(limpoBase64, 'base64');
+
+            // Definição dos caminhos
+            const nomeArquivo = `pizza-${id}-${Date.now()}.jpg`;
+            const pastaUploads = path.join(__dirname, '..', '..', 'public', 'uploads');
+            const caminhoDestino = path.join(pastaUploads, nomeArquivo);
+
+            // 💡 Garante que a pasta public/uploads existe no disco antes de gravar
+            if (!fs.existsSync(pastaUploads)){
+                fs.mkdirSync(pastaUploads, { recursive: true });
+            }
+
+            // 💾 SALVA O ARQUIVO FISICAMENTE NO DISCO
+            fs.writeFileSync(caminhoDestino, buffer);
+
+            // 🌐 Caminho relativo para salvar no banco (para o src da tag <img> ler certo)
+            const urlSalvarNoBanco = `/uploads/${nomeArquivo}`;
+
+            // 🔍 VALIDAÇÃO DO OBJETO DE BANCO (Evita o 'undefined')
+            if (!db) {
+                throw new Error("O objeto 'db' não foi encontrado no contexto do GraphQL.");
+            }
+        
+            const produtoAtualizado = await db.collection('products').findOneAndUpdate(
+                {_id: new ObjectId(id)},
+                { 
+                    $set: { foto_url: urlSalvarNoBanco } 
+                },
+                {ReturnDocument: 'after'}
+            );
+            
+            if (!produtoAtualizado) {
+                throw new Error("Produto não encontrado para atualizar.");
+            }
+            
+        return {
+            id: produtoAtualizado._id.toString(),
+            name: produtoAtualizado.name,
+            foto_url: produtoAtualizado.foto_url
+        };
+       
+    } catch (error: any) {
+        const mensagemReal = error?.message || String(error);
+        throw new Error(`Falha ao processar e salvar imagem: ${mensagemReal}`);
+    }
+  
+        
+/*
+            try {
+                const uploadResult = await cloudinary.uploader.upload(base64Image, {
+                    folder: 'pizzaria_imagens',
+                    transformation: [{width:800, heigth: 600, crop: 'limit', qulity: 'auto'}]
+                });
+
+                const secureUrl = uploadResult.secure_url;
+
+                const result = await db.collection('products').findOneAndUpdadte(
+                    { _id: new ObjectId(id) },
+                    { $set: { foto_url: secureUrl} },
+                    { ReturnDocument: 'after' }
+                );
+
+                const updateProduct = result.value || result ;
+
+                if (!updateProduct){
+                    throw new Error("Produto não encontrado.");
+                }
+
+                return {
+                    ...updateProduct,
+                    id: updateProduct._id.toString()
+                };
+            } catch (error: any){
+                console.error("Erro no upload da imagem: "+error);
+                throw new Error("Falha ao processar e salvar imagem: "+ error.message);
+            }*/
+
         },
 
         checkoutOrder: async (_: any, { items, total_price } : any, { db, user } : any) => { //verificar para usar payment_id

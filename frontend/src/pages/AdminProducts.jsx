@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { gql } from '@apollo/client/core';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { UploadFotoPizza } from "../components/UploadFotoPizza";
 
 const LIST_PRODUCTS = gql` 
   query List { 
-    listProducts { id name price stock_quantity ingredients }
+    listProducts { id name price stock_quantity foto_url ingredients }
   }
 `;
 
@@ -21,7 +22,7 @@ const UPDATE_PRODUCT = gql`
 `;
 
 export function AdminProducts() {
-    const { data, refetch } = useQuery(LIST_PRODUCTS);
+    const { data, loading, error, refetch } = useQuery(LIST_PRODUCTS);
     const [createProduct] = useMutation(CREATE_PRODUCT);
     const [updateProduct] = useMutation(UPDATE_PRODUCT, { refetchQueries: ['List'] });
     
@@ -82,6 +83,9 @@ export function AdminProducts() {
         setFormData({ name: '', price: '', stock_quantity: '', ingredients: '' });
     };
 
+    if (loading) return <div className="p-6 text-white text-center">Carregando cardápio...</div>;
+    if (error) return <div className="p-6 text-red-500 text-center">Erro: {error.message}</div>;
+    
     return (
         <div className="min-h-screen bg-gray-950 text-white p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* FORMULÁRIO */}
@@ -151,10 +155,21 @@ export function AdminProducts() {
                                     Editar Tudo 
                                 </button>
                             </div>
+                            <div className="border-t border-b border-gray-800/60 py-3">
+                                <UploadFotoPizza 
+                                    productId={p.id} 
+                                    currentImage={p.foto_url}
+                                    onUploadSuccess={() => {
+                                        // 🔄 Força a atualização da lista na tela para renderizar a nova imagem do Cloudinary instantaneamente
+                                        refetch(); 
+                                    }}
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>
             </div>
         </div>
     );
+    
 }

@@ -43,6 +43,7 @@ export const typeDefs = gql`
         price: Float!
         stock_quantity: Int!
         ingredients: [String!]!
+        foto_url: String
     }
 
     type Location { lat: Float! long: Float!}
@@ -103,6 +104,7 @@ export const typeDefs = gql`
         updateProfile(name: String!, address: AddressInput!): User!
         createProduct(name: String!, price: Float!, stock_quantity: Int!, ingredients: [String!]!): Product!
         updateProduct(id: ID!, name: String, price: Float, stock_quantity: Int, ingredients: [String!]!): Product!
+        uploadProductImage(id: ID!, base64Image: String!) : Product!
         checkoutOrder(items: [CartItemInput!]!, total_price: Float!): Order!
         updateDriverLocation(orderId: ID!, lat: Float!, long: Float!): String!
         updateOrderStatus(orderId: ID!, status: OrderStatus!): String!
