@@ -9,6 +9,7 @@ import { Cart } from './pages/Cart';
 import { OrderStatus } from './pages/OrderStatus';
 import { Profile } from './pages/Profile';
 import { AdminOrders } from './pages/AdminOrders';
+import { AuthGuard } from './components/AuthGuard';
 
 export default function App() {
   const [cart, setCart] = useState([]);
@@ -46,15 +47,21 @@ export default function App() {
       )}
 
       <Routes>
+        {/** Rotas públicas */}        
+        <Route path="*" element={<Navigate to={hasToken ? "/home" : "/login"} />} />        
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<Register />} />        
         <Route path="/home" element={<Home addToCart={addToCart} />} />
+        
         <Route path="/cart" element={<Cart cartItems={cart} clearCart={clearCart} />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/status/:id" element={<OrderStatus />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="*" element={<Navigate to={hasToken ? "/home" : "/login"} />} />
-        <Route path="/admin/pedidos" element={<AdminOrders />} />
+
+        {/** Rotas protegidas pelo */}
+        <Route element={<AuthGuard />}>
+          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/pedidos" element={<AdminOrders />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
