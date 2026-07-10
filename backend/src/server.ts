@@ -6,8 +6,8 @@ import cors from 'cors';
 import { typeDefs } from './graphql/typeDefs';
 import { resolvers } from './graphql/resolvers';
 
-const MONGO_URI ='mongodb://localhost:27017/loja-online';
-const SECRET_KEY : string ='123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const MONGO_URI = process.env.MONGO_URI!;
+const SECRET_KEY = process.env.SECRET_KEY!;
 const PORT = process.env.PORT || 4000;
 
 async function startServer() {
@@ -28,7 +28,8 @@ async function startServer() {
     context: ({ req }) => {
       const authHeader = req.headers.authorization || '';
       const token = authHeader.replace('Bearer ','');
-
+      let user = null;
+      
       if (token ) {
         try {
 
@@ -38,7 +39,7 @@ async function startServer() {
           console.log('Token inválido');
         }
       }
-      return { db, user: null}
+      return { db, user}
     }
   });
 

@@ -22,7 +22,7 @@ const LIST_PRODUCTS = gql`
     }
 `;
 
-const UPDATE_ORDER_SATUS = gql`
+const UPDATE_ORDER_STATUS = gql`
     mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!){
         updateOrderStatus(orderId: $orderId, status: $status)
     }
@@ -33,7 +33,7 @@ export function AdminOrders() {
         pollInterval: 10000 // Atualiza a tela a cada 10 segundos
     });
     const { data: productsData}  = useQuery(LIST_PRODUCTS);
-    const [updateStatus] = useMutation(UPDATE_ORDER_SATUS);
+    const [updateStatus] = useMutation(UPDATE_ORDER_STATUS);
 
     const handleStatusChange = async (id, newStatus) =>{
         try {
@@ -63,6 +63,17 @@ export function AdminOrders() {
         });
     }
 
+      const translateStatus = (status) => {
+        switch(status) {
+            case 'PAID': return 'Pedido Recebido 💳';
+            case 'PREPARING': return 'No Forno / Em Preparo 🍕';
+            case 'DELIVERING': return 'Saiu para Entrega 🚀';
+            case 'DELIVERED': return 'Entregue ✅';
+            default: return status;
+        }
+    };
+
+
     if (loading) return <div className='p-6 text-white'>Carregando painel de pedidos...</div>
     if (error) return <div className='p-6 text-red-500'>Erro: {error.message}</div>
 
@@ -71,7 +82,7 @@ export function AdminOrders() {
             <header className='flex justify-between items-center mb-6 border-b border-gray-800 pb-4'>
                 <div>
                     <h1 className='text-2xl font-bold text-orange-500'>Painel de Pedidos 🍕 </h1>
-                    <p className='text-xs text-gray-400'>Monitor da Cozinha e Entregas (Atualzia automaticamente)</p>
+                    <p className='text-xs text-gray-400'>Monitor da Cozinha e Entregas (Atualizado automaticamente)</p>
                 </div>
                 <button onClick={() => refetch()} className='bg-gray-800 hover:bg-gray-700 text-xs px-4 py-2 rounded-xl font-semibold'>
                     Forçar Atualização
@@ -85,7 +96,7 @@ export function AdminOrders() {
                             <div className='flex justify-between items-start mb-2'>
                                 <span className='text-xs text-gray-500 font-mono'> ID: #{order.id.slice(-6)}  </span>
                                 <span className={`text-xs px-2 py-1 rounded-md border font-bold ${getStatusStyle(order.status)}`}>
-                                    Status: {order.status}
+                                    Status:  {translateStatus(order.status)}
                                 </span>
                             </div>
                             {/*Itens do Pedido */}                  

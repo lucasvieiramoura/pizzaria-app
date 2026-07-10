@@ -9,11 +9,32 @@ import { Cart } from './pages/Cart';
 import { OrderStatus } from './pages/OrderStatus';
 import { Profile } from './pages/Profile';
 import { AdminOrders } from './pages/AdminOrders';
-import { AuthGuard } from './components/AuthGuard';
+import { AuthGuard } from './components/AuthGuard';;
+import { CustomerOrders } from './pages/CustomerOrders';
+
+import { gql } from '@apollo/client/core';
+import { useQuery } from '@apollo/client/react';
+
+
+const GET_ME = gql`
+    query GetMe { 
+    me {
+        name 
+        email 
+        role 
+        address {
+          cep 
+          street 
+          number 
+          }
+      }
+    }
+`;
 
 export default function App() {
   const [cart, setCart] = useState([]);
   const hasToken = !!localStorage.getItem('@PizzaToken');
+  const { data } = useQuery(GET_ME);
 
   const addToCart = (product) => {
     setCart((prevCart) => {
@@ -41,7 +62,7 @@ export default function App() {
           <Link to="/home" className="hover:text-orange-500">🍕 Cardápio</Link>
           <Link to="/cart" className="hover:text-orange-500">🛒 Carrinho ({cart.length})</Link>
           <Link to="/admin/products" className="hover:text-orange-500">🛠️ Painel Estoque</Link>
-          <Link to="/profile" className="hover:text-orange-500">👤 Perfil</Link>
+          <Link to="/profile" className="hover:text-orange-500">👤 Olá, {data?.me.name} </Link>
           <button onClick={() => { localStorage.clear(); window.location.href = '/login'; }} className="ml-auto text-red-500">Sair</button>
         </nav>
       )}
@@ -53,6 +74,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />        
         <Route path="/home" element={<Home addToCart={addToCart} />} />
         
+        <Route path="/meus-pedidos" element={<CustomerOrders />} />
         <Route path="/cart" element={<Cart cartItems={cart} clearCart={clearCart} />} />
         <Route path="/status/:id" element={<OrderStatus />} />
         <Route path="/profile" element={<Profile />} />

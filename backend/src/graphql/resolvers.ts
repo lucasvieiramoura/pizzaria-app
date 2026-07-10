@@ -22,6 +22,7 @@ export const resolvers = {
         me: async (_: any, __: any, {db, user }: any ) =>{
             checkAuth(user);
             return await db.collection('users').findOne({_id: new ObjectId(user.id)});
+           
         },
         listProducts:async (_parent : {_parent : any }, _args : {_args: any}, { db }:{ db: any}) => {
             const products = await db.collection('products').find().toArray();
@@ -48,6 +49,16 @@ export const resolvers = {
             const orders = await db.collection('orders').find().sort({_createdAt: -1}).toArray();
 
             return orders.map((order:any) =>({
+                ...order,
+                id: order._id.toString()
+            }));
+        },
+        customerOrders: async (_: any, _args : any,  {db , user} : {db:any, user:any}) =>{
+            if(!user){
+                throw new Error("Usuário não autenticado");
+            }
+            const orders = await db.collection('orders').find({ client_id: new ObjectId(user._id)}).sort({ _id: -1}).toArray();
+            return orders.map((order: any) => ({
                 ...order,
                 id: order._id.toString()
             }));

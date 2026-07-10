@@ -14,6 +14,15 @@ const TRACK_ORDER = gql`
         }
     }
 `;
+ const translateStatus = (status) => {
+        switch(status) {
+            case 'PAID': return 'Pedido Recebido 💳';
+            case 'PREPARING': return 'No Forno / Em Preparo 🍕';
+            case 'DELIVERING': return 'Saiu para Entrega 🚀';
+            case 'DELIVERED': return 'Entregue ✅';
+            default: return status;
+        }
+    };
 
 export function OrderStatus() {
     const { id } = useParams();
@@ -32,7 +41,7 @@ export function OrderStatus() {
                 <span className='text-xs bg-gray-800 px-4 py-1 rounded-fulol text-gray-500'>ID: {id}</span>
 
                 <div className='py-4'>
-                    <p className='text-sm text-gray-400 mb-1'>Status Atual: {order?.status}</p>
+                    <p className='text-sm text-gray-400 mb-1'>Status Atual:  {translateStatus(order.status)}</p>
                     <p className='text-sm text-gray-400 mb-1'>Total: R$ {order?.total_price.toFixed(2)}</p>
                 </div>
 
