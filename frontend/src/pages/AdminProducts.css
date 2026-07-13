@@ -1,0 +1,336 @@
+/* AdminProducts.css */
+
+.admin-container {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #FAF6F0; /* Fundo pastel idêntico aos prints */
+    min-height: 100vh;
+    padding: 2rem;
+    color: #4A3E3D;
+}
+
+/* Área do Topo */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #1A0D0A;
+    margin: 0;
+}
+
+.admin-header p {
+    color: #8C7A78;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* Layout de Duas Colunas (Responsivo) */
+.admin-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+@media (min-width: 1024px) {
+    .admin-layout {
+        grid-template-columns: 400px 1fr; /* Formulário fixo na esquerda */
+    }
+}
+
+/* Estilização do Formulário (Imagem 3) */
+.product-form {
+    background: #FFFFFF;
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid #F0EAE1;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1A0D0A;
+    margin-bottom: 0.5rem;
+}
+
+.product-form input,
+.product-form textarea,
+.product-form select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background-color: #F3EDE4; /* Cor de input do print 3 */
+    border: none;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    color: #4A3E3D;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.product-form input::placeholder,
+.product-form textarea::placeholder {
+    color: #A69592;
+}
+
+.product-form input:focus,
+.product-form textarea:focus {
+    outline: 2px solid #C44117;
+    background-color: #FFFFFF;
+}
+
+/* Botão Laranja Clássico da Pizzaria */
+.btn-primary {
+    width: 100%;
+    background-color: #C44117; /* Laranja queimado dos prints */
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 1rem;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-top: 0.5rem;
+}
+
+.btn-primary:hover {
+    background-color: #A8330E;
+}
+
+.btn-secondary {
+    width: 100%;
+    background-color: #EFE9E0;
+    color: #6E5E5C;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+/* Grid de Cards dos Produtos (Imagem 2) */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.product-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border: 1px solid #F0EAE1;
+    display: flex;
+    flex-col: column;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(196, 65, 23, 0.08);
+}
+
+/* Imagem no topo do Card */
+.card-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    background-color: #EFE9E0;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-cover: cover;
+    object-fit: cover;
+}
+
+/* Badge de Estoque e Ação de Deletar */
+.stock-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: #1A0D0A;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+}
+
+.stock-badge.low-stock {
+    background: #FCE8E6;
+    color: #C8372D;
+    border: 1px solid #F5C2BE;
+}
+
+.btn-delete-card {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(252, 232, 230, 0.9);
+    border: 1px solid #F5C2BE;
+    color: #C8372D;
+    padding: 0.4rem;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-delete-card:hover {
+    background: #C8372D;
+    color: white;
+}
+
+/* Detalhes abaixo da imagem */
+.card-content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+}
+
+.card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1A0D0A;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.card-price {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #C44117;
+    white-space: nowrap;
+}
+
+.card-description {
+    font-size: 0.85rem;
+    color: #8C7A78;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Badges inferiores */
+.card-footer {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-badge {
+    background-color: #F3EDE4;
+    color: #8C7A78;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+}
+
+.status-badge {
+    background-color: #E6F7ED;
+    color: #198754;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+}
+
+/* Upload de fotos encaixado nativamente */
+.card-upload-box {
+    background: #FAF6F0;
+    border-radius: 12px;
+    padding: 0.25rem;
+    border: 1px dashed #E5DDD3;
+}
+
+.btn-edit-inline {
+    width: 100%;
+    background: #FFFFFF;
+    border: 1px solid #DED6CB;
+    color: #4A3E3D;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.6rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-edit-inline:hover {
+    border-color: #C44117;
+    color: #C44117;
+}
+
+/* Estilo para a caixa de upload dentro do formulário */
+.form-upload-box {
+    background-color: #F3EDE4;
+    border: 2px dashed #DED6CB;
+    border-radius: 16px;
+    padding: 0.5rem;
+    transition: border-color 0.2s;
+}
+
+.form-upload-box:hover {
+    border-color: #C44117;
+}
+
+/* Estado desabilitado (quando for um novo cadastro) */
+.form-upload-disabled {
+    background-color: #EFE9E0;
+    border: 1px solid #DED6CB;
+    border-radius: 16px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.form-upload-disabled p {
+    font-size: 0.85rem;
+    color: #8C7A78;
+    margin: 0;
+}
+
+/* Feedback visual indicando qual card está sendo editado */
+.card-editing-active {
+    border-color: #C44117 !important;
+    box-shadow: 0 0 0 2px rgba(196, 65, 23, 0.15) !important;
+}

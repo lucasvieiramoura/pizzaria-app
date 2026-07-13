@@ -125,7 +125,7 @@ export const resolvers = {
             return { id: result.insertedId, ...agrs };
         },
 
-        updateProduct: async (_: any, {id,name, price, stock_quantity, ingredients }: any, { db, user }: any ) =>{
+        updateProduct: async (_: any, {id,name, price, stock_quantity, ingredients, foto_url }: any, { db, user }: any ) =>{
             if (!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Acesso restrito.");
             const result = await db.collection('products').findOneAndUpdate(
                 {_id: new ObjectId(id)},
@@ -133,7 +133,8 @@ export const resolvers = {
                     name,
                     price: parseFloat(price),
                     stock_quantity: parseInt(stock_quantity,10),
-                    ingredients
+                    ingredients,
+                    foto_url, 
                 }},
                 {ReturnDocument: 'after'}
             );

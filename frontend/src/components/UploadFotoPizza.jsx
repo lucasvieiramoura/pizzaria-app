@@ -84,11 +84,7 @@ export function UploadFotoPizza({productId, currentImage, onUploadSuccess }){
         <div className="bg-gray-900 border border-gray-800 p-4 rounded-2xl flex flex-col items-center gap-4">
             {/* Exibição da foto atual ou do Preview */}
             <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-950 border border-gray-800 flex items-center justify-center">
-                {previewUrl ? (
-                    <img src={previewUrl} alt="Pizza" className="w-full h-full object-cover" />
-                ) : (
-                    <span className="text-xs text-gray-600">Sem foto</span>
-                )}
+               
             </div>
 
             <div className="w-full flex flex-col gap-2">

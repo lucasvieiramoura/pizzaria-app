@@ -103,7 +103,7 @@ export const typeDefs = gql`
         loginUser(email: String!, password_hash: String!): String!
         updateProfile(name: String!, address: AddressInput!): User!
         createProduct(name: String!, price: Float!, stock_quantity: Int!, ingredients: [String!]!): Product!
-        updateProduct(id: ID!, name: String, price: Float, stock_quantity: Int, ingredients: [String!]!): Product!
+        updateProduct(id: ID!, name: String, price: Float, stock_quantity: Int, ingredients: [String!]!, foto_url: String): Product!
         uploadProductImage(id: ID!, base64Image: String!) : Product!
         checkoutOrder(items: [CartItemInput!]!, total_price: Float!): Order!
         updateDriverLocation(orderId: ID!, lat: Float!, long: Float!): String!
