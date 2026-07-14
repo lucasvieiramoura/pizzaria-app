@@ -193,7 +193,7 @@ export const resolvers = {
             }
             
         return {
-            id: produtoAtualizado._id.toString(),
+            id: produtoAtualizado._id ? produtoAtualizado._id.toString() : id,
             name: produtoAtualizado.name,
             foto_url: produtoAtualizado.foto_url
         };
@@ -297,6 +297,6 @@ export const resolvers = {
         }
     },
     Product: {
-        id: (parent: { _id: any }) => parent._id.toString()
+        id: (parent: { _id: any }) => parent._id
     },
 };
