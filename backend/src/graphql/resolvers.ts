@@ -33,19 +33,25 @@ export const resolvers = {
             return await db.collection('users').findOne({_id: new ObjectId(user.id)});
            
         },
-        listProducts:async (_parent : {_parent : any }, _args : {_args: any}, { db }:{ db: any}) => {
-            const products = await db.collection('products').find().toArray();
-            
-            if (!Array.isArray(products)) {
-            console.log("O que o Mongo retornou:", products); // Ajuda a debugar se der erro novamente
-            return [];
+        listProducts:async (_ :  any, {search } :  {search?: string}, { db }:{ db: any}) => {
+            try {
+                const query: any = {};
+                if(search) {
+                    query.$or = [
+                        {name: {$regex: search, $options: 'i'}},
+                        {ingredients: { $regex: search, $options: 'i'}}
+                    ];
+                }
+                const products = await db.collection('products').find(query).toArray();
+                
+                return products.map((product: { _id: any; [key: string]: any}) => ({
+                    ...product,
+                    id: product._id.toString(),
+                    foto_url: product.foto_url
+                }));
+            } catch (error: any){
+                    throw new Error('Erro ao buscar lista de produtos: '+error.message);
             }
-
-            return products.map((product: { _id: any; [key: string]: any}) => ({
-                ...product,
-                id: product._id.toString(),
-                foto_url: product.foto_url
-            }));
         },
         getProduct: async(_: any, { id }: any, { db }: any ) =>{
             return await db.collection('products').findOne({_id: new ObjectId(id)});
@@ -192,47 +198,16 @@ export const resolvers = {
                 throw new Error("Produto não encontrado para atualizar.");
             }
             
-        return {
-            id: produtoAtualizado._id ? produtoAtualizado._id.toString() : id,
-            name: produtoAtualizado.name,
-            foto_url: produtoAtualizado.foto_url
-        };
-       
-    } catch (error: any) {
-        const mensagemReal = error?.message || String(error);
-        throw new Error(`Falha ao processar e salvar imagem: ${mensagemReal}`);
-    }
-  
+            return {
+                id: produtoAtualizado._id ? produtoAtualizado._id.toString() : id,
+                name: produtoAtualizado.name,
+                foto_url: produtoAtualizado.foto_url
+            };
         
-/*
-            try {
-                const uploadResult = await cloudinary.uploader.upload(base64Image, {
-                    folder: 'pizzaria_imagens',
-                    transformation: [{width:800, heigth: 600, crop: 'limit', qulity: 'auto'}]
-                });
-
-                const secureUrl = uploadResult.secure_url;
-
-                const result = await db.collection('products').findOneAndUpdadte(
-                    { _id: new ObjectId(id) },
-                    { $set: { foto_url: secureUrl} },
-                    { ReturnDocument: 'after' }
-                );
-
-                const updateProduct = result.value || result ;
-
-                if (!updateProduct){
-                    throw new Error("Produto não encontrado.");
-                }
-
-                return {
-                    ...updateProduct,
-                    id: updateProduct._id.toString()
-                };
-            } catch (error: any){
-                console.error("Erro no upload da imagem: "+error);
-                throw new Error("Falha ao processar e salvar imagem: "+ error.message);
-            }*/
+            } catch (error: any) {
+                const mensagemReal = error?.message || String(error);
+                throw new Error(`Falha ao processar e salvar imagem: ${mensagemReal}`);
+            }
 
         },
 

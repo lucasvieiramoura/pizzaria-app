@@ -82,7 +82,7 @@ export const typeDefs = gql`
     # Operaçãoes de Leitura (Substiu os GETs)
     type Query {
         me: User!
-        listProducts: [Product!]!
+        listProducts(search: String): [Product!]!
         getProduct(id: ID!): Product!
         trackOrder(id: ID!): Order!
         listOrders: [Order!]!

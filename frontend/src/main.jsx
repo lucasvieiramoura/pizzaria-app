@@ -1,9 +1,10 @@
-
 import ReactDOM from 'react-dom/client';
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import { ApolloProvider } from '@apollo/client/react';
 import { setContext } from '@apollo/client/link/context';
 import App from './App';
+import React from 'react';
+import { CartProvider } from './context/CartContext';
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql', // Substitua pelo seu endpoint GraphQL
@@ -26,7 +27,11 @@ const client = new ApolloClient({
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>
+  <React.StrictMode>
+    <ApolloProvider client={client}>
+      <CartProvider>
+        <App/>
+      </CartProvider>
+    </ApolloProvider>
+  </React.StrictMode>
 );
