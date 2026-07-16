@@ -1,4 +1,5 @@
 // src/App.jsx
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -13,7 +14,6 @@ import { CustomerOrders } from './pages/CustomerOrders';
 
 import { gql } from '@apollo/client/core';
 import { useQuery } from '@apollo/client/react';
-import { useCart } from './context/CartContext';
 
 
 const GET_ME = gql`
@@ -32,11 +32,10 @@ const GET_ME = gql`
 `;
 
 export default function App() {
-  //const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState([]);
   const hasToken = !!localStorage.getItem('@PizzaToken');
   const { data } = useQuery(GET_ME);
-  const {addToCart} = useCart();
-/*
+
   const addToCart = (product) => {
     setCart((prevCart) => {
       const existing = prevCart.find(item => item.id === product.id);
@@ -49,7 +48,7 @@ export default function App() {
   };
 
   const clearCart = () => setCart([]);
-*/
+
   return (
     <BrowserRouter>
     {!hasToken && (
@@ -61,9 +60,9 @@ export default function App() {
       {hasToken && (
         <nav className="bg-gray-900 border-b border-gray-800 p-4 flex gap-4 text-sm font-semibold text-gray-300">
           <Link to="/home" className="hover:text-orange-500">🍕 Cardápio</Link>
-          <Link to="/cart" className="hover:text-orange-500">🛒 Carrinho ({addToCart.length})</Link>
+          <Link to="/cart" className="hover:text-orange-500">🛒 Carrinho ({cart.length})</Link>
           <Link to="/admin/products" className="hover:text-orange-500">🛠️ Painel Estoque</Link>
-          <Link to="/profile" className="hover:text-orange-500">  Olá, { data?.me.name ? data?.me.name : "Login"}</Link>
+          <Link to="/profile" className="hover:text-orange-500">{ data?.me.name ? "  Olá, "+data?.me.name: " Login"} </Link>
           <button onClick={() => { localStorage.clear(); window.location.href = '/login'; }} className="ml-auto text-red-500">Sair</button>
         </nav>
       )}
@@ -76,7 +75,7 @@ export default function App() {
         <Route path="/home" element={<Home addToCart={addToCart} />} />
         
         <Route path="/meus-pedidos" element={<CustomerOrders />} />
-        <Route path="/cart" element={<Cart cartItems={addToCart.cart} clearCart={addToCart.clearCart} />} />
+        <Route path="/cart" element={<Cart cartItems={cart} clearCart={clearCart} />} />
         <Route path="/status/:id" element={<OrderStatus />} />
         <Route path="/profile" element={<Profile />} />
 

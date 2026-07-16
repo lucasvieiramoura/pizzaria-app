@@ -2,18 +2,17 @@ import { gql } from '@apollo/client/core';
 import { useMutation } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 
-
 const CHECKOUT_MUTATION = gql`
     mutation Checkout($items: [CartItemInput!]!, $total: Float!){
         checkoutOrder(items: $items, total_price: $total) {id}
     }
 `;
 
-export function Cart({ cartItems, clearCart }){
+export function Cart({ cartItems =[], clearCart }){
     const [checkoutOrder, {loading}] = useMutation(CHECKOUT_MUTATION);
     const navigate = useNavigate();
 
-    const total  = cartItems.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
+    const total  = (cartItems || []).reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
 
     const handlePayment = async () => {
         if (cartItems.length === 0) return alert('Seu carrinho está vazio');
