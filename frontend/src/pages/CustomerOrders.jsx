@@ -1,11 +1,17 @@
 import { gql } from '@apollo/client/core';
 import { useQuery } from '@apollo/client/react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const LIST_PRODUCTS = gql`
-    query ListProducts{
-        listProducts{
-            id
-            name
+    query ListProducts($search: String) {
+        listProducts(search: $search) { 
+        id 
+        name 
+        price 
+        stock_quantity 
+        ingredients 
+        foto_url
         }
     }
 `;
@@ -15,6 +21,7 @@ const CUSTOMER_ORDERS = gql`
         customerOrders {
             id
             total_price
+            client_id
             status
             created_at
             items {
@@ -26,8 +33,12 @@ const CUSTOMER_ORDERS = gql`
 `;
 
 export function CustomerOrders() {
+    const [searchTerm] = useState('');
+
     const { data: ordersData, loading: ordersLoading, error: ordersError } = useQuery(CUSTOMER_ORDERS, { pollInterval: 15000});
-    const { data: productData, loading: productLoading } = useQuery(LIST_PRODUCTS);
+    const { data: productData, loading: productLoading } = useQuery(LIST_PRODUCTS, {
+        variables: { search: searchTerm},
+    });
 
     const productMap ={};
     if(productData?.listProducts) {
@@ -45,6 +56,8 @@ export function CustomerOrders() {
             default: return status;
         }
     };
+
+    //console.log(ordersData);
 
     if(ordersLoading || productLoading ) return <div className="p-6 text-white text-center">Carregando seus pedidos...</div>;
     if(ordersError) return <div className='p-6 text-red-500 text-center'>Erro: {ordersError.message}</div>;
@@ -94,8 +107,13 @@ export function CustomerOrders() {
                                 }`}>
                                     {translateStatus(order.status)}
                                 </div>
-                            </div>
-
+                                <Link 
+                                    to={`/status/${order.id}`}
+                                    className="text-xs bg-gray-800 hover:bg-orange-600 text-white font-bold px-3 py-1.5 rounded-xl transition-colors text-center w-full md:w-auto"
+                                >
+                                    Acompanhar
+                                </Link>                                
+                            </div>                        
                         </div>
                     ))}
                 </div>

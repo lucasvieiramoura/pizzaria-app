@@ -69,11 +69,18 @@ export const resolvers = {
                 id: order._id.toString()
             }));
         },
-        customerOrders: async (_: any, _args : any,  {db , user} : {db:any, user:any}) =>{
+        customerOrders: async (_: any, __ : any,  {db , user} : {db:any, user:any}) =>{
             if(!user){
                 throw new Error("Usuário não autenticado");
             }
-            const orders = await db.collection('orders').find({ client_id: new ObjectId(user._id)}).sort({ _id: -1}).toArray();
+
+            const orders = await db.collection('orders').find({ client_id: new ObjectId(user.id)}).sort({ _id: -1}).toArray();
+
+            if (!orders) {
+                 throw new Error('Dados não encontrados');
+            }
+
+
             return orders.map((order: any) => ({
                 ...order,
                 id: order._id.toString()

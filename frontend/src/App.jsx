@@ -62,7 +62,12 @@ export default function App() {
           <Link to="/home" className="hover:text-orange-500">🍕 Cardápio</Link>
           <Link to="/cart" className="hover:text-orange-500">🛒 Carrinho ({cart.length})</Link>
           <Link to="/admin/products" className="hover:text-orange-500">🛠️ Painel Estoque</Link>
-          <Link to="/profile" className="hover:text-orange-500">{ data?.me.name ? "  Olá, "+data?.me.name: " Login"} </Link>
+          {!data?.me.name && (
+            <Link to="/login" className="hover:text-orange-500">{ data?.me.name ? "  Olá, "+data?.me.name: " 👤 Login"} </Link>
+          )}
+          {data?.me.name && (
+          <Link to="/profile" className="hover:text-orange-500">{ data?.me.name ? "  Olá, "+data?.me.name: " 👤 Login"} </Link>
+          )}
           <button onClick={() => { localStorage.clear(); window.location.href = '/login'; }} className="ml-auto text-red-500">Sair</button>
         </nav>
       )}
@@ -78,7 +83,7 @@ export default function App() {
         <Route path="/cart" element={<Cart cartItems={cart} clearCart={clearCart} />} />
         <Route path="/status/:id" element={<OrderStatus />} />
         <Route path="/profile" element={<Profile />} />
-
+      
         {/** Rotas protegidas pelo */}
         <Route element={<AuthGuard />}>
           <Route path="/admin/products" element={<AdminProducts />} />
