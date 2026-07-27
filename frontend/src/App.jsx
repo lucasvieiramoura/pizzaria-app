@@ -51,24 +51,60 @@ export default function App() {
 
   return (
     <BrowserRouter>
-    {!hasToken && (
-        <nav className="bg-gray-900 border-b border-gray-800 p-4 flex gap-4 text-sm font-semibold text-gray-300">
-          <Link to="/home" className="hover:text-orange-500">🍕 Cardápio</Link>
-          <Link to="/login" className="hover:text-orange-500">👤 Login</Link>
+   {!hasToken ? (
+        <nav className="bg-gray-900/90 backdrop-blur-md border-b border-gray-800 p-4 sticky top-0 z-50 flex justify-between items-center text-sm font-semibold">
+          <div className="flex gap-6 items-center">
+            <Link to="/home" className="text-xl font-extrabold text-orange-500 tracking-wide">
+                🍕 Pizzaria
+              </Link>
+              <Link to="/home" className="text-gray-300 hover:text-orange-500 transition-colors">
+                Cardápio
+              </Link>
+            </div>
+            <Link to="/login" className="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-xl transition-colors">
+              👤 Entrar
+            </Link>
         </nav>
-      )}
-      {hasToken && (
-        <nav className="bg-gray-900 border-b border-gray-800 p-4 flex gap-4 text-sm font-semibold text-gray-300">
-          <Link to="/home" className="hover:text-orange-500">🍕 Cardápio</Link>
-          <Link to="/cart" className="hover:text-orange-500">🛒 Carrinho ({cart.length})</Link>
-          <Link to="/admin/products" className="hover:text-orange-500">🛠️ Painel Estoque</Link>
-          {!data?.me.name && (
-            <Link to="/login" className="hover:text-orange-500">{ data?.me.name ? "  Olá, "+data?.me.name: " 👤 Login"} </Link>
-          )}
-          {data?.me.name && (
-          <Link to="/profile" className="hover:text-orange-500">{ data?.me.name ? "  Olá, "+data?.me.name: " 👤 Login"} </Link>
-          )}
-          <button onClick={() => { localStorage.clear(); window.location.href = '/login'; }} className="ml-auto text-red-500">Sair</button>
+      ) : (
+        <nav className="bg-gray-900/90 backdrop-blur-md border-b border-gray-800 px-6 py-4 sticky top-0 z-50 flex justify-between items-center text-sm font-semibold">
+          <div className="flex gap-6 items-center">
+            <Link to="/home" className="text-xl font-extrabold text-orange-500 tracking-wide mr-2">
+              🍕 Pizzaria
+            </Link>
+            <Link to="/home" className="text-gray-300 hover:text-orange-500 transition-colors">
+              Cardápio
+            </Link>
+            <Link to="/meus-pedidos" className="text-gray-300 hover:text-orange-500 transition-colors">
+              Meus Pedidos
+            </Link>
+            {data?.me?.role === 'ADMIN' && (
+              <Link to="/admin/products" className="text-orange-400 hover:text-orange-300 transition-colors bg-orange-500/10 px-3 py-1.5 rounded-lg border border-orange-500/20">
+                🛠️ Painel Estoque
+              </Link>
+            )}
+          </div>
+
+          <div className="flex gap-4 items-center">
+          <Link to="/cart" className="relative bg-gray-800 hover:bg-gray-700 text-white px-3.5 py-2 rounded-xl transition-colors flex items-center gap-2">
+            <span>🛒 Carrinho</span>
+            {cart.length > 0 && (
+              <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full animate-bounce">
+                {cart.reduce((total, item) => total + item.quantity, 0)}
+              </span>
+            )}
+          </Link>
+
+          <Link to="/profile" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
+            👤 {data?.me?.name || "Minha Conta"}
+          </Link>
+
+          <button 
+            onClick={() => { localStorage.clear(); window.location.href = '/login'; }} 
+            className="text-red-400 hover:text-red-300 text-xs font-bold bg-red-500/10 hover:bg-red-500/20 px-3 py-2 rounded-xl transition-colors"
+            >
+              Sair
+            </button>
+          </div>
         </nav>
       )}
 

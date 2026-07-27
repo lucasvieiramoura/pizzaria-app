@@ -5,6 +5,7 @@ import { setContext } from '@apollo/client/link/context';
 import App from './App';
 import React from 'react';
 import { CartProvider } from './context/CartContext';
+import './index.css'; //
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql', // Substitua pelo seu endpoint GraphQL

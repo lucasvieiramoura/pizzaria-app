@@ -50,9 +50,51 @@ export function Home({ addToCart }) {
                     const imgSource = product.foto_url ? `${API_URL}${product.foto_url}` : 'https://placehold.co/400x300?text=Sem+Foto';      
                  
                 return (
-                    
-                <div key={product.id} className="bg-gray-900 border border-gray-800 p-5 rounded-2xl flex flex-col justify-between">
-                    {/* 📸 Espaço para a imagem do produto */}
+
+                    <div key={product.id} className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-5 flex flex-col justify-between transition-all duration-200 shadow-lg hover:shadow-2xl hover:-translate-y-1">
+                        <div>
+                            <div className="relative w-full h-44 bg-gray-950 rounded-xl mb-4 overflow-hidden flex items-center justify-center border border-gray-800/50">
+                            <img 
+                                src={imgSource ||  product.foto_url || '/uploads/default-pizza.png'} 
+                                alt={product.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            {product.stock_quantity <= 5 && product.stock_quantity > 0 && (
+                                <span className="absolute top-2 right-2 bg-yellow-500/20 text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-md border border-yellow-500/30 backdrop-blur-md">
+                                Poucas unidades!
+                                </span>
+                            )}
+                            </div>
+
+                            <h3 className="text-xl font-bold text-white mb-1 tracking-tight">{product.name}</h3>
+                            <p className="text-gray-400 text-xs leading-relaxed mb-4 line-clamp-2">
+                            {Array.isArray(product.ingredients) ? product.ingredients.join(', ') : product.ingredients}
+                            </p>
+                        </div>
+
+                        <div className="flex justify-between items-center pt-3 border-t border-gray-800/60 mt-auto">
+                            <div>
+                            <span className="text-xs text-gray-500 block">Preço</span>
+                            <span className="text-lg font-extrabold text-green-400">R$ {product.price.toFixed(2)}</span>
+                            </div>
+
+                            {product.stock_quantity > 0 ? (
+                            <button 
+                                onClick={() => addToCart(product)} 
+                                className="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-md active:scale-95"
+                            >
+                                + Adicionar
+                            </button>
+                            ) : (
+                            <span className="text-red-400 bg-red-500/10 border border-red-500/20 text-xs font-bold px-3 py-1.5 rounded-xl">
+                                Esgotado
+                            </span>
+                            )}
+                        </div>
+                        </div>
+                /*
+                <div key={product.id} className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-5 flex flex-col justify-between transition-all duration-200 shadow-lg hover:shadow-2xl hover:-translate-y-1">
+                    {/* 📸 Espaço para a imagem do produto //}
                         <div className="w-full h-40 bg-gray-950 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
                             <img 
                                 src={imgSource || '/uploads/default-pizza.png'} 
@@ -79,6 +121,7 @@ export function Home({ addToCart }) {
                     )}
                     </div>
                 </div>
+                */
                 );
             }
                 )}
