@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { gql } from '@apollo/client/core';
 import { useMutation, useQuery } from '@apollo/client/react';
-//import { UploadFotoPizza } from "../components/UploadFotoPizza";
-//import './AdminProducts.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
 

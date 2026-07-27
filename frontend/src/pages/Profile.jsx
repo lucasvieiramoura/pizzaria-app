@@ -14,7 +14,7 @@ const UPDATE_PROFILE = gql`
 `;
 
 export function Profile () {
-    const { data, loading } = useQuery(GET_ME);
+    const { data, loading, refetch} = useQuery(GET_ME);
     const [updateProfile] = useMutation(UPDATE_PROFILE);
     const [editData, setEditData] = useState({name: '', cep: '', street: '', number: ''});
 
@@ -32,7 +32,8 @@ export function Profile () {
                     lat: 0.0, long: 0.0
                 }
             }});
-            alert('Perfil Atualziado');
+            alert('Perfil Atualizado');
+            refetch(); 
         } catch (err) { alert(err.message); }
     };
 
