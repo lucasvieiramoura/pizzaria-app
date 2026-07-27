@@ -80,7 +80,7 @@ export default function App() {
         <Route path="/home" element={<Home addToCart={addToCart} />} />
         
         <Route path="/meus-pedidos" element={<CustomerOrders />} />
-        <Route path="/cart" element={<Cart cartItems={cart} clearCart={clearCart} />} />
+        <Route path="/cart" element={<Cart cartItems={cart} clearCart={clearCart} userAddress={data?.me?.address}/>} />
         <Route path="/status/:id" element={<OrderStatus />} />
         <Route path="/profile" element={<Profile />} />
       
