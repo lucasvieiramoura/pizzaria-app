@@ -7,7 +7,15 @@ import { typeDefs } from './graphql/typeDefs';
 import { resolvers } from './graphql/resolvers';
 import path, { dirname } from 'node:path';
 
-const MONGO_URI = process.env.MONGO_URI_WEB! ;
+const mongoUser = process.env.MONGO_WEB_USER!;
+const mongoPassword = process.env.MONGO_WEB_PASSWORD!;
+
+const username = encodeURIComponent(mongoUser);
+const password = encodeURIComponent(mongoPassword);
+const cluster = process.env.MONGO_WEB_CLUSTER!;
+const appName = process.env.MONGO_WEB_APPNAME!;
+
+const MONGO_URI = `mongodb+srv://${username}:${password}@${cluster}.ym8yvxt.mongodb.net/?appName=${appName}`;
 const SECRET_KEY = process.env.SECRET_KEY!;
 const PORT = process.env.PORT || 4000;
 
