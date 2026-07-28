@@ -7,7 +7,7 @@ import { typeDefs } from './graphql/typeDefs';
 import { resolvers } from './graphql/resolvers';
 import path, { dirname } from 'node:path';
 
-const MONGO_URI = process.env.MONGO_URI! || process.env.MONGO_URI_WEB|| "mongodb://localhost:27017/loja-online";
+const MONGO_URI = process.env.MONGO_URI_WEB! ;
 const SECRET_KEY = process.env.SECRET_KEY!;
 const PORT = process.env.PORT || 4000;
 
