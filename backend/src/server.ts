@@ -62,7 +62,7 @@ async function startServer() {
   await server.start();
   server.applyMiddleware({ app:app as any, path: '/graphql'});
   
-  app.listen(PORT, () =>{
+  app.listen({ port: PORT, host: '0.0.0.0' }, () =>{
     console.log(`🚀 Servidor rodando em http://localhost:${PORT}${server.graphqlPath}`);
   })
 }
