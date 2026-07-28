@@ -26,11 +26,11 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
   app.use('/uploads', express.static(path.join(__dirname,'..','public', 'uploads')));
-//  app.use(express.static(path.join(__dirname,"../../frontend/dist")));
+  app.use(express.static(path.join(__dirname,"../../frontend/dist")));
 
-//  app.get("*", (req, res) => {
-//    res.sendFile(path.join(__dirname,"../../frontend/dist/index.html"));
- // });
+ app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname,"../../frontend/dist/index.html"));
+  });
 
   // 1. Conexão com o MongoDB
   const client = new MongoClient(MONGO_URI);

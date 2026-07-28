@@ -10,7 +10,7 @@ import './index.css'; //
 const API_URL = 
   import.meta.env === "development"
   ? "http://localhost:4000/graphql"
-  : "http://localhost:4000/graphql";//"https://pizzaria-app-k4j2.onrender.com";
+  : "https://pizzaria-app-k4j2.onrender.com";
 
 const httpLink = createHttpLink({
   uri: API_URL,
