@@ -5,9 +5,9 @@ import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import { typeDefs } from './graphql/typeDefs';
 import { resolvers } from './graphql/resolvers';
-import path from 'path';
+import path, { dirname } from 'node:path';
 
-const MONGO_URI = process.env.MONGO_URI!;
+const MONGO_URI = process.env.MONGO_URI! || "mongodb://localhost:27017/loja-online";
 const SECRET_KEY = process.env.SECRET_KEY!;
 const PORT = process.env.PORT || 4000;
 
@@ -17,6 +17,11 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
   app.use('/uploads', express.static(path.join(__dirname,'..','public', 'uploads')));
+  app.use(express.static(path.join(__dirname,"../../frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname,"../../frontend/dist/index.html"));
+  });
 
   // 1. Conexão com o MongoDB
   const client = new MongoClient(MONGO_URI);

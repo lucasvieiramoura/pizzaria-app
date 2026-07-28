@@ -5,10 +5,14 @@ import { setContext } from '@apollo/client/link/context';
 import App from './App';
 import React from 'react';
 import { CartProvider } from './context/CartContext';
-import './index.css'; //
+
+const API_URL = 
+  import.meta.env === "development"
+  ? "http://localhost:4000/graphql"
+  : "http://render:4000/graphql";
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql', // Substitua pelo seu endpoint GraphQL
+  uri: API_URL,
 });
 
 // Middleware para anexar o token JWT automaticamente em todo requisição do GraphQL
