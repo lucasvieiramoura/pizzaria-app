@@ -5,9 +5,9 @@ import { setContext } from '@apollo/client/link/context';
 import App from './App';
 import React from 'react';
 import { CartProvider } from './context/CartContext';
-import './index.css'; //
+import './index.css'; 
 
-const API_URL = "https://pizzaria-app-k4j2.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL || 'https://pizzaria-app-k4j2.onrender.com/graphql'
  // import.meta.env === "development"
  // ? "http://localhost:4000/graphql"
   //: "https://pizzaria-app-k4j2.onrender.com";
