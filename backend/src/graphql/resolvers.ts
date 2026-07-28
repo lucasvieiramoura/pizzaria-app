@@ -107,7 +107,9 @@ export const resolvers = {
 
     Mutation: {
         registerUser: async (_: any, { name, email, password_hash, role, address } : any, { db } : any) => {
-            const exists = await db.collection('users').findOne({ email });
+            
+            const exists = await db.collection('users').findOne({email});
+            //db.collection('users').findOne({ email });
             if(exists) throw new Error("E-mail já cadastrado");
 
             const hashedPassword = await bcrypt.hash(password_hash, 10);

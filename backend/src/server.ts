@@ -14,8 +14,9 @@ const username = encodeURIComponent(mongoUser);
 const password = encodeURIComponent(mongoPassword);
 const cluster = process.env.MONGO_WEB_CLUSTER!;
 const appName = process.env.MONGO_WEB_APPNAME!;
+const db_name = process.env.MONGO_WEB_DBNAME!;
 
-const MONGO_URI = `mongodb+srv://${username}:${password}@${cluster}.ym8yvxt.mongodb.net/?appName=${appName}`;
+const MONGO_URI = `mongodb+srv://${username}:${password}@${cluster}.ym8yvxt.mongodb.net/${db_name}?appName=${appName}`;
 const SECRET_KEY = process.env.SECRET_KEY!;
 const PORT = process.env.PORT || 4000;
 
@@ -25,16 +26,16 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
   app.use('/uploads', express.static(path.join(__dirname,'..','public', 'uploads')));
-  app.use(express.static(path.join(__dirname,"../../frontend/dist")));
+//  app.use(express.static(path.join(__dirname,"../../frontend/dist")));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname,"../../frontend/dist/index.html"));
-  });
+//  app.get("*", (req, res) => {
+//    res.sendFile(path.join(__dirname,"../../frontend/dist/index.html"));
+ // });
 
   // 1. Conexão com o MongoDB
   const client = new MongoClient(MONGO_URI);
   await client.connect();
-  const db = client.db();
+  const db = client.db('pizzaria');
   console.log("🍃 MongoDB conectado com sucesso!");
 
   const server = new ApolloServer({

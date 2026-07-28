@@ -271,7 +271,24 @@ export function AdminProducts() {
                     ) : (
                         <div className="form-upload-disabled">
                             <p>Selecione um produto cadastrado abaixo para alterar ou adicionar uma foto.</p>
+
+                            <div className="hidden-uploader-wrapper">
+                                <input 
+                                type="file" 
+                                id={`file-pizza-${editingProductId}`}
+                                accept="image/*" 
+                                onChange={handleFileChange} 
+                                className="hidden"
+                                />
+                                <label 
+                                    htmlFor={`file-pizza-${editingProductId}`}
+                                    className="w-full text-center cursor-pointer bg-green-600 hover:bg-green-900 text-white text-xs py-2 rounded-xl font-semibold transition"
+                                >
+                                    {imagePreview ? 'Trocar Imagem' : 'Selecionar Imagem'}
+                                </label>  
+                            </div>
                         </div>
+                        
                     )}
                 </div>
                 {base64String && (

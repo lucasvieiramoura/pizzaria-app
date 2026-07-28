@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* Suas estilizações customizadas abaixo (scrollbars, card-dark, etc) */
 
 /* 🎨 Estilização da Scrollbar */
@@ -114,7 +113,7 @@
     display: block;
     font-size: 0.95rem;
     font-weight: 600;
-    color: #1A0D0A;
+    color:  #1A0D0A;
     margin-bottom: 0.5rem;
 }
 
@@ -123,7 +122,7 @@
 .product-form select {
     width: 100%;
     padding: 0.85rem 1rem;
-    background-color: #F3EDE4; /* Cor de input do print 3 */
+    background-color:  #F3EDE4; /* Cor de input do print 3 */
     border: none;
     border-radius: 16px;
     font-size: 0.95rem;
