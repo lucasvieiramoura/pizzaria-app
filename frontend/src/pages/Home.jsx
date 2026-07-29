@@ -15,10 +15,10 @@ const LIST_PRODUCTS = gql`
     }
 `;
 
-const API_URL = 'https://pizzaria-app-k4j2.onrender.com';
-    //import.meta.env === 'production' 
-  //? 'https://pizzaria-app-k4j2.onrender.com' 
-  //: 'http://localhost:4000';
+const API_URL = 
+    import.meta.env === 'production' 
+  ? 'https://pizzaria-app-k4j2.onrender.com/graphql' 
+  : 'http://localhost:4000';
 
 export function Home({ addToCart }) {
     
