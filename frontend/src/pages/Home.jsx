@@ -58,7 +58,12 @@ export function Home({ addToCart }) {
                         <div>
                             <div className="relative w-full h-44 bg-gray-950 rounded-xl mb-4 overflow-hidden flex items-center justify-center border border-gray-800/50">
                             <img 
-                                src={imgSource ||  product.foto_url || '/uploads/default-pizza.png'} 
+                                //src={imgSource ||  product.foto_url || '/uploads/default-pizza.png'} 
+                                src={imgSource ||
+                                    product.foto_url 
+                                    ? product.foto_url.replace('http://localhost:4000', 'https://pizzaria-app-k4j2.onrender.com')
+                                    : '/placeholder.jpg'
+                                }
                                 alt={product.name}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
