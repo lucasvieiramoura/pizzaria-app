@@ -16,7 +16,7 @@ const LIST_PRODUCTS = gql`
 `;
 
 const API_URL_FOTO =  
-import.meta.env.NODE_ENV ===  'production' 
+import.meta.env.MODE ===  'production' 
   ? 'https://pizzaria-app-k4j2.onrender.com/graphql'
   : 'http://localhost:4000' ;
 
