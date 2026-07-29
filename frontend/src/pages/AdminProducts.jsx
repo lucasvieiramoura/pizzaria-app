@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 
 const API_URL_FOTO =  
 import.meta.env.MODE ===  'production' 
-  ? 'https://pizzaria-app-k4j2.onrender.com/graphql'
+  ? 'https://pizzaria-app-k4j2.onrender.com'
   : 'http://localhost:4000' ;
 
 const LIST_PRODUCTS = gql` 
