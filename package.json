@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/lucasvieiramoura/pizzaria-app/issues"
   },
-  "homepage": "https://github.com/lucasvieiramoura/pizzaria-app#readme"
+  "homepage": "https://github.com/lucasvieiramoura/pizzaria-app#readme",
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  }
 }
