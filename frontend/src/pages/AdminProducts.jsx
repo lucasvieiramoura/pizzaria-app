@@ -2,7 +2,7 @@ import { useState } from "react";
 import { gql } from '@apollo/client/core';
 import { useMutation, useQuery } from '@apollo/client/react';
 
-const API_URL = import.meta.env.NODE_ENV === 'production' 
+const API_URL = import.meta.env ===  'production' 
   ? 'https://pizzaria-app-k4j2.onrender.com' 
   : 'http://localhost:4000';
 
