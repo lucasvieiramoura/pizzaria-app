@@ -2,7 +2,7 @@ import { useState } from "react";
 import { gql } from '@apollo/client/core';
 import { useMutation, useQuery } from '@apollo/client/react';
 
-const API_URL = 'https://pizzaria-app-k4j2.onrender.com/graphql';
+const API_URL_FOTO = 'https://pizzaria-app-k4j2.onrender.com';
  //  import.meta.env.NODE_ENV ===  'production' 
  // ? 'https://pizzaria-app-k4j2.onrender.com/graphql'
  // : 'http://localhost:4000';
@@ -112,7 +112,7 @@ export function AdminProducts() {
    // Busca a URL da foto atual do produto que está sendo editado (se houver um selecionado)
     const productBeingEdited = data?.listProducts?.find(p => p.id === editingProductId);
     const currentFormImgSource = productBeingEdited?.foto_url 
-        ? `${API_URL}${productBeingEdited.foto_url}` 
+        ? `${API_URL_FOTO}${productBeingEdited.foto_url}` 
         : 'https://placehold.co/400x300?text=Sem+Foto';
 
     if (loading) return <div className="p-6 text-white text-center">Carregando cardápio...</div>;
@@ -305,7 +305,7 @@ export function AdminProducts() {
             {/* COLUNA DA VITRINE DE CARDS */}
             <div className="products-grid">
                 {data?.listProducts.map(p => {
-                    const imgSource = p.foto_url ? `${API_URL}${p.foto_url}` : 'https://placehold.co/400x300?text=Sem+Foto';      
+                    const imgSource = p.foto_url ? `${API_URL_FOTO}${p.foto_url}` : 'https://placehold.co/400x300?text=Sem+Foto';      
                     const isLowStock = p.stock_quantity <= 5;
 
                     return (
@@ -375,95 +375,4 @@ export function AdminProducts() {
         </div>
     </div>
 );
-
-    /*
-    return (
-        <div className="min-h-screen bg-gray-950 text-white p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* FORMULÁRIO //}
-            <form onSubmit={handleSubmit} className="bg-gray-900 p-6 rounded-2xl border border-gray-800 space-y-4 h-fit">
-                <h2 className="text-xl font-bold text-orange-500">
-                    {editingProductId ? 'Editar Produto / Pizza' : 'Adicionar Novo Produto / Pizza'}
-                </h2>
-                
-                <input 
-                    type="text" 
-                    placeholder="Nome" 
-                    required 
-                    className="w-full bg-gray-800 p-3 rounded-xl" 
-                    value={formData.name}
-                    onChange={e => setFormData({ ...formData, name: e.target.value })} 
-                />
-                <input 
-                    type="number" 
-                    step="0.01" 
-                    placeholder="Preço" 
-                    required 
-                    className="w-full bg-gray-800 p-3 rounded-xl" 
-                    value={formData.price}
-                    onChange={e => setFormData({ ...formData, price: e.target.value })} 
-                />
-                <input 
-                    type="number" 
-                    placeholder="Quantidade em Estoque" 
-                    required 
-                    className="w-full bg-gray-800 p-3 rounded-xl" 
-                    value={formData.stock_quantity}
-                    onChange={e => setFormData({ ...formData, stock_quantity: e.target.value })} 
-                />
-                <input 
-                    type="text" 
-                    placeholder="Ingredientes (separados por vírgula)" 
-                    required 
-                    className="w-full bg-gray-800 p-3 rounded-xl" 
-                    value={formData.ingredients}
-                    onChange={e => setFormData({ ...formData, ingredients: e.target.value })} 
-                />
-                
-                <button type="submit" className="w-full bg-green-600 font-bold p-3 rounded-xl hover:bg-green-700 transition">
-                    {editingProductId ? 'Atualizar Produto' : 'Salvar Produto'}
-                </button>
-                
-                {editingProductId && (
-                    <button 
-                        type="button" 
-                        className="w-full bg-gray-700 font-bold p-3 rounded-xl hover:bg-gray-600 transition text-gray-200"
-                        onClick={handleCancel}
-                    >
-                        Cancelar Edição
-                    </button>
-                )}
-            </form>
-
-            {/* LISTAGEM //}
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800">
-                <h2 className="text-xl font-bold mb-4 text-gray-400">Estoque de Produtos Atual</h2>
-                <div className="space-y-2">
-                    {data?.listProducts.map(p => {
-                        const imgSource = p.foto_url ? `${API_URL}${p.foto_url}` : 'https://placehold.co/300x200?text=Sem+Foto';      
-                        return(                   
-                            <div key={p.id} className="flex justify-between items-center bg-gray-800 p-3 rounded-xl gap-2">
-                                <span className="flex-1 truncate">{p.name} - R$: {p.price} - (Qtd: {p.stock_quantity})</span>                          
-                                <div className="flex gap-2">
-                                    <button onClick={() => handleEditClick(p)} className="bg-orange-600 text-xs px-3 py-2 rounded-lg font-semibold hover:bg-orange-700">
-                                        Editar Tudo 
-                                    </button>
-                                </div>
-                                <div className="border-t border-b border-gray-800/60 py-3">
-                                    <UploadFotoPizza 
-                                        productId={p.id} 
-                                        currentImage={imgSource}
-                                        onUploadSuccess={() => {
-                                            // 🔄 Força a atualização da lista na tela para renderizar a nova imagem do Cloudinary instantaneamente
-                                            refetch(); 
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-        </div>
-    );
-    */
 }
