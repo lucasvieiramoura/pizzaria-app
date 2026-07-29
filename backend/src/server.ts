@@ -25,7 +25,7 @@ async function startServer() {
 
   app.use(cors());
   app.use(express.json());
-  app.use('/uploads', express.static(path.join(__dirname,'../uploads')));
+  app.use('/uploads', express.static(path.join(__dirname,'../public/uploads')));
 
   if (process.env.NODE_ENV === 'production') {
     const frontendPath = path.join(__dirname, '../../frontend/dist');
