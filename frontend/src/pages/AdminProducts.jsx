@@ -3,7 +3,7 @@ import { gql } from '@apollo/client/core';
 import { useMutation, useQuery } from '@apollo/client/react';
 
 const API_URL =
-    import.meta.env ===  'production' 
+   import.meta.env.NODE_ENV ===  'production' 
   ? 'https://pizzaria-app-k4j2.onrender.com/graphql'
   : 'http://localhost:4000';
 
