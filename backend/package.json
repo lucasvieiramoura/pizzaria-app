@@ -5,7 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Rodou o Test\" ",
-    "dev": "npx ts-node src/server.ts "
+    "dev": "cross-env NODE_ENV=development npx ts-node src/server.ts ",
+    "start": "cross-env NODE_ENV=production npx ts-node src/server.ts "
   },
   "keywords": [],
   "author": "",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
+    "cross-env": "^10.1.0",
     "nodemon": "^3.1.14"
   }
 }

@@ -46,7 +46,7 @@ async function startServer() {
   const client = new MongoClient(MONGO_URI);
   await client.connect();
   const db = client.db('pizzaria');
-  console.log("🍃 MongoDB conectado com sucesso!");
+  console.log(`🍃 MongoDB conectado com sucesso! URL: ${MONGO_URI}`);
 
   const server = new ApolloServer({
     typeDefs,
@@ -73,7 +73,7 @@ async function startServer() {
   server.applyMiddleware({ app:app as any, path: '/graphql'});
   
   app.listen({ port: PORT, host: '0.0.0.0' }, () =>{
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}${server.graphqlPath}`);
+    console.log(`🚀 Servidor rodando em http://localhost:${PORT}${server.graphqlPath} Env: ${process.env.NODE_ENV }`);
   })
 }
 
