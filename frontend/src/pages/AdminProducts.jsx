@@ -2,7 +2,9 @@ import { useState } from "react";
 import { gql } from '@apollo/client/core';
 import { useMutation, useQuery } from '@apollo/client/react';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.NODE_ENV === 'production' 
+  ? 'https://pizzaria-app-k4j2.onrender.com' 
+  : 'http://localhost:4000';
 
 const LIST_PRODUCTS = gql` 
   query List { 
@@ -167,10 +169,6 @@ export function AdminProducts() {
                     const networkMsgs = err.networkError.result?.errors?.map(e => e.message).join(', ');
                     alert(`Erro de Rede: ${networkMsgs || err.networkError.message}`);
                 } 
-                // Fallback genérico caso não seja nenhum dos dois
-                //else {
-                //    alert(`Erro genérico: ${err.message || 'Falha desconhecida'}`);
-                //}
         }
     }
 

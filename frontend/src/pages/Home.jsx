@@ -15,7 +15,9 @@ const LIST_PRODUCTS = gql`
     }
 `;
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.NODE_ENV === 'production' 
+  ? 'https://pizzaria-app-k4j2.onrender.com' 
+  : 'http://localhost:4000';
 
 export function Home({ addToCart }) {
     
@@ -47,6 +49,7 @@ export function Home({ addToCart }) {
             </header>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {data.listProducts.map(product => {
+                    product.foto_url?.replace('http://localhost:4000', 'https://pizzaria-app-k4j2.onrender.com')
                     const imgSource = product.foto_url ? `${API_URL}${product.foto_url}` : 'https://placehold.co/400x300?text=Sem+Foto';      
                  
                 return (
@@ -92,36 +95,6 @@ export function Home({ addToCart }) {
                             )}
                         </div>
                         </div>
-                /*
-                <div key={product.id} className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-5 flex flex-col justify-between transition-all duration-200 shadow-lg hover:shadow-2xl hover:-translate-y-1">
-                    {/* 📸 Espaço para a imagem do produto //}
-                        <div className="w-full h-40 bg-gray-950 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
-                            <img 
-                                src={imgSource || '/uploads/default-pizza.png'} 
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = 'https://placehold.co/600x400?text=Sem+Foto';
-                                }}
-                            />
-                        </div>
-                    <div>
-                    <h3 className="text-xl font-bold text-white mb-1">{product.name}</h3>
-                    <p className="text-gray-400 text-sm mb-3">{product.ingredients.join(', ')}</p>
-                    </div>
-                    <div className="flex justify-between items-center mt-4">
-                    <span className="text-green-400 font-bold text-lg">R$ {product.price.toFixed(2)}</span>
-                    {product.stock_quantity > 0 ? (
-                        <button onClick={() => addToCart(product)} className="bg-orange-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-orange-500">
-                        Adicionar
-                        </button>
-                    ) : (
-                        <span className="text-red-500 text-sm font-semibold">Esgotado</span>
-                    )}
-                    </div>
-                </div>
-                */
                 );
             }
                 )}
