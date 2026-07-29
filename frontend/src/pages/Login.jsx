@@ -25,6 +25,14 @@ export function Login() {
         } catch (errr) {alert(errr.message)}
     };
 
+     const handleRegister= async (e) => {
+        e.preventDefault();
+        try {
+            navigate('/register');
+            window.location.reload();
+        } catch (errr) {alert(errr.message)}
+    };
+
     return (
         <div className='min-h-screen bg-gray-950 flex items-center justify-center text-white'>
             <form onSubmit={handleLogin} className="bg-gray-900 p-8 rounded-2xl w-full max-w-sm border border-gray-800 space-y-4">
@@ -32,6 +40,7 @@ export function Login() {
                 <input type="email" placeholder="Seu e-mail" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setEmail(e.target.value)} />
                 <input type="password" placeholder="Sua senha" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setPassword(e.target.value)} />
                 <button type="submit" className="w-full bg-orange-600 font-bold p-3 rounded-xl hover:bg-orange-500">Entrar</button>
+                <button onClick={handleRegister} type="button" className="w-full bg-green-600 font-bold p-3 rounded-xl hover:bg-green-500">Cadastre-se</button>
             </form>
         </div>
     );

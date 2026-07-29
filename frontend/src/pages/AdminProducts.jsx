@@ -2,10 +2,10 @@ import { useState } from "react";
 import { gql } from '@apollo/client/core';
 import { useMutation, useQuery } from '@apollo/client/react';
 
-const API_URL_FOTO = 'https://pizzaria-app-k4j2.onrender.com';
- //  import.meta.env.NODE_ENV ===  'production' 
- // ? 'https://pizzaria-app-k4j2.onrender.com/graphql'
- // : 'http://localhost:4000';
+const API_URL_FOTO =  
+import.meta.env.NODE_ENV ===  'production' 
+  ? 'https://pizzaria-app-k4j2.onrender.com/graphql'
+  : 'http://localhost:4000' ;
 
 const LIST_PRODUCTS = gql` 
   query List { 

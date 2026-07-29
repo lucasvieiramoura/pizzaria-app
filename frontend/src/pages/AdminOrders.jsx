@@ -117,14 +117,14 @@ export function AdminOrders() {
                             </div>
                         </div>
                             {/* Controles de Status */}
-                            <div className='gird gird-cols-2 gap-2 pt-2 border-t border-gray-800/50'>
-                                <button onClick={() => handleStatusChange(order.id, 'PREPARING')} className='bg-orange-600 hover:bg-orange-700 text-xs font-bold py-2 rounded-xs transition'>
+                            <div className='flex gird gird-cols-2 gap-2 pt-2 border-t border-gray-800/50'>
+                                <button onClick={() => handleStatusChange(order.id, 'PREPARING')} className='bg-orange-600 hover:bg-orange-700 text-xs font-bold px-2 py-2 rounded-xl transition'>
                                     Começar Preparo
                                 </button>
-                                <button onClick={() => handleStatusChange(order.id, 'DELIVERING')} className="bg-blue-600 hover:bg-blue-700 text-xs font-bold py-2 rounded-xl transition">
+                                <button onClick={() => handleStatusChange(order.id, 'DELIVERING')} className="bg-blue-600 hover:bg-blue-700 text-xs font-bold px-2 py-2 rounded-xl transition">
                                     Enviar p/ Entrega
                                 </button>
-                                <button onClick={() => handleStatusChange(order.id, 'DELIVERED')}className="bg-green-600 hover:bg-green-700 text-xs font-bold py-2 col-span-2 rounded-xl transition">
+                                <button onClick={() => handleStatusChange(order.id, 'DELIVERED')}className="bg-green-600 hover:bg-green-700 text-xs font-bold px-2 py-2 col-span-5 rounded-xl transition">
                                     Marcar como Entregue
                                 </button>
                             </div>

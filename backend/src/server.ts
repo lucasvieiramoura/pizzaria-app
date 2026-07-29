@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { MongoClient } from 'mongodb';
@@ -16,7 +17,10 @@ const cluster = process.env.MONGO_WEB_CLUSTER!;
 const appName = process.env.MONGO_WEB_APPNAME!;
 const db_name = process.env.MONGO_WEB_DBNAME!;
 
-const MONGO_URI = `mongodb+srv://${username}:${password}@${cluster}.ym8yvxt.mongodb.net/${db_name}?appName=${appName}`;
+const MONGO_URI =
+  process.env.NODE_ENV === 'production'
+  ? `mongodb+srv://${username}:${password}@${cluster}.ym8yvxt.mongodb.net/${db_name}?appName=${appName}` 
+  :  process.env.MONGO_URI!;
 const SECRET_KEY = process.env.SECRET_KEY!;
 const PORT = process.env.PORT || 4000;
 
