@@ -7,14 +7,14 @@ import React from 'react';
 import { CartProvider } from './context/CartContext';
 import './index.css'; 
 
-const API_URL = 'https://pizzaria-app-k4j2.onrender.com' ;
+//const API_URL = 'https://pizzaria-app-k4j2.onrender.com' ;
   //import.meta.env ===  'production' 
   //? 'https://pizzaria-app-k4j2.onrender.com' 
   //: 'http://localhost:4000';
 
 
 const httpLink = createHttpLink({
-  uri: API_URL,
+  uri: 'https://pizzaria-app-k4j2.onrender.com',
 });
 
 // Middleware para anexar o token JWT automaticamente em todo requisição do GraphQL
