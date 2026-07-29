@@ -7,10 +7,10 @@ import React from 'react';
 import { CartProvider } from './context/CartContext';
 import './index.css'; 
 
-const API_URL = 
-  import.meta.env.NODE_ENV ===  'production' 
-  ? 'https://pizzaria-app-k4j2.onrender.com/graphql' 
-  : 'http://localhost:4000';
+const API_URL = 'https://pizzaria-app-k4j2.onrender.com/graphql';
+ // import.meta.env.NODE_ENV ===  'production' 
+ // ? 'https://pizzaria-app-k4j2.onrender.com/graphql' 
+ // : 'http://localhost:4000';
 
 
 const httpLink = createHttpLink({
