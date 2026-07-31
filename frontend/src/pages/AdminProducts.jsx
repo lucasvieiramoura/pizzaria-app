@@ -21,6 +21,7 @@ export function AdminProducts() {
     const [editingProductId, setEditingProductId] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
+        category:'PIZZA',
         price: '',
         stock_quantity: '',
         ingredients: '',
@@ -32,7 +33,8 @@ export function AdminProducts() {
         e.preventDefault();
 
         const payload = {
-            name: formData.name,
+            name: formData.name,            
+            category: formData.category,
             price: parseFloat(formData.price),
             stock_quantity: parseInt(formData.stock_quantity, 10),
             ingredients: formData.ingredients.split(',').map(i => i.trim()).filter(Boolean),
@@ -44,6 +46,7 @@ export function AdminProducts() {
                 await updateProduct({                    
                     variables: {
                         id: editingProductId,
+                        category: formData.category,
                         foto_url: currentFormImgSource,
                         ...payload
                     }
@@ -59,7 +62,7 @@ export function AdminProducts() {
                 alert('Produto criado com sucesso');
             }
             setEditingProductId(null);
-            setFormData({ name: '', price: '', stock_quantity: '', ingredients: '', foto_url:'' });
+            setFormData({ name: '', category:'', price: '', stock_quantity: '', ingredients: '', foto_url:'' });
             refetch(); // Garante a atualização da lista
         } catch (err) {
             console.error('Erro na operação', err);
@@ -70,7 +73,8 @@ export function AdminProducts() {
     const handleEditClick = (p) => {
         setEditingProductId(p.id);
         setFormData({
-            name: p.name,
+            name: p.name,            
+            category: p.category,
             price: p.price,
             stock_quantity: p.stock_quantity,
             ingredients: p.ingredients ? p.ingredients.join(', ') : '',
@@ -80,7 +84,7 @@ export function AdminProducts() {
 
     const handleCancel = () => {
         setEditingProductId(null);
-        setFormData({ name: '', price: '', stock_quantity: '', ingredients: '',foto_url:'' });
+        setFormData({ name: '', category:'', price: '', stock_quantity: '', ingredients: '',foto_url:'' });
     };
 
    // Busca a URL da foto atual do produto que está sendo editado (se houver um selecionado)
@@ -180,6 +184,21 @@ export function AdminProducts() {
                 </div>
 
                 <div className="form-group">
+                    <label>Categoria do produto</label>
+                    <select 
+                        className="w-full bg-gray-800 p-3 rounded-xl text-gray-400" 
+                        value={formData.category}                        
+                        onChange={e => setFormData({...formData, category: e.target.value})}>
+                            <option value=""></option>
+                            <option value="PIZZA">Pizza</option>
+                            <option value="BEBIDA">Bebida</option>
+                            <option value="SOBREMESA">Sobremesa</option>
+
+                        </select>
+                </div>
+
+
+                <div className="form-group">
                     <label>Preço (R$)</label>
                     <input 
                         type="number" 
@@ -234,7 +253,7 @@ export function AdminProducts() {
                                 />
                                 <label 
                                     htmlFor={`file-pizza-${editingProductId}`}
-                                    className="w-full text-center cursor-pointer bg-gray-800 hover:bg-gray-700 text-white text-xs py-2 rounded-xl font-semibold transition"
+                                    className="w-full text-center cursor-pointer bg-green-600 hover:bg-green-900 text-white text-xs py-2 rounded-xl font-semibold transition"
                                 >
                                     {imagePreview ? 'Trocar Imagem' : 'Selecionar Imagem'}
                                 </label>  
@@ -264,12 +283,17 @@ export function AdminProducts() {
                         
                     )}
                 </div>
+                
+                <button type="submit" className="btn-primary" >
+                    { editingProductId ? 'Salvar Alterações' : 'Cadastrar Produto'}
+                </button>
                 {base64String && (
                 <button type="submit" className="btn-primary" >
                     { editingProductId ? 'Salvar Alterações' : 'Cadastrar Produto'}
                 </button>
                 )}
                 {editingProductId && (
+                    
                     <button type="button" className="btn-secondary" onClick={handleCancel}>
                         Cancelar Edição
                     </button>

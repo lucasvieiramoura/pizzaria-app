@@ -26,6 +26,12 @@ export const typeDefs = gql`
         ENCERRADA
     }
 
+    enum ProductCategory {
+        PIZZA
+        BEBIDA
+        SOBREMESA
+    }
+
     type User {
         id: ID!
         name: String!
@@ -48,6 +54,7 @@ export const typeDefs = gql`
         id: ID!
         name: String!
         description: String
+        category: ProductCategory
         price: Float!
         stock_quantity: Int!
         ingredients: [String!]!
@@ -135,8 +142,8 @@ export const typeDefs = gql`
         registerUser(name: String!, email: String!, password_hash: String!, role: Role!, address: AddressInput): String!
         loginUser(email: String!, password_hash: String!): String!
         updateProfile(name: String!, address: AddressInput!): User!
-        createProduct(name: String!, price: Float!, stock_quantity: Int!, ingredients: [String!]!): Product!
-        updateProduct(id: ID!, name: String, price: Float, stock_quantity: Int, ingredients: [String!]!, foto_url: String): Product!
+        createProduct(name: String!, category: ProductCategory,  price: Float!, stock_quantity: Int!, ingredients: [String!]!): Product!
+        updateProduct(id: ID!, name: String, category: ProductCategory, price: Float, stock_quantity: Int, ingredients: [String!]!, foto_url: String): Product!
         uploadProductImage(id: ID!, base64Image: String!) : Product!
         checkoutOrder(items: [CartItemInput!]!, total_price: Float!): Order!
         updateDriverLocation(orderId: ID!, lat: Float!, long: Float!): String!

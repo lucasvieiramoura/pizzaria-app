@@ -1,40 +1,16 @@
 import { useState } from 'react';
-import { gql } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
 import { useQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 
-const GET_ALL_TABLES = gql`
-  query GetAllTables {
-    getAllTables {
-      id
-      number
-      capacity
-      status
-    }
-  }
-`;
-
-const CREATE_TABLE = gql`
-  mutation CreateTable($number: Int!, $capacity: Int) {
-    createTable(number: $number, capacity: $capacity) {
-      id
-      number
-      capacity
-      status
-    }
-  }
-`;
-
-const DELETE_TABLE = gql`
-  mutation DeleteTable($number: Int!) {
-    deleteTable(number: $number)
-  }
-`;
+import {GET_ME, GET_ALL_TABLES, CREATE_TABLE, DELETE_TABLE} from '../../../backend/src/graphql/tableQueries';
 
 export function AdminTables() {
     const [tableNumber, setTableNumber] = useState('');
     const [capacity, setCapacity] = useState('4');
+
+    const { data: userData } = useQuery(GET_ME);
+    const isStaffOrAdmin = userData?.me?.role  === 'EMPRESA' || userData?.me?.role === 'ADMIN';
 
     const { data, loading, refetch } = useQuery(GET_ALL_TABLES);
     const [createTable] = useMutation(CREATE_TABLE);
@@ -90,6 +66,7 @@ export function AdminTables() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Formulario de Cadastro */}
+            { isStaffOrAdmin && (
             <div className="bg-[#1f2937] p-6 rounded-xl border border-gray-700 h-fit">
             <h2 className="text-xl font-bold mb-4 text-amber-500">Nova Mesa</h2>
             <form onSubmit={handleCreateTable} className="space-y-4">
@@ -128,7 +105,7 @@ export function AdminTables() {
                 </button>
             </form>
             </div>
-
+            )}
             {/* Lista de Mesas Cadastradas */}
             <div className="md:col-span-2 space-y-4">
             <h2 className="text-xl font-bold text-gray-300">Mesas no Salão ({tables.length})</h2>

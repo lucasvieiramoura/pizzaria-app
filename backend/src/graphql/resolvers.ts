@@ -172,12 +172,13 @@ export const resolvers = {
             return { id: result.insertedId, ...agrs };
         },
 
-        updateProduct: async (_: any, {id,name, price, stock_quantity, ingredients, foto_url }: any, { db, user }: any ) =>{
+        updateProduct: async (_: any, {id,name, category, price, stock_quantity, ingredients, foto_url }: any, { db, user }: any ) =>{
             if (!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Acesso restrito.");
             const result = await db.collection('products').findOneAndUpdate(
                 {_id: new ObjectId(id)},
                 {$set: {
                     name,
+                    category,
                     price: parseFloat(price),
                     stock_quantity: parseInt(stock_quantity,10),
                     ingredients,
@@ -189,7 +190,7 @@ export const resolvers = {
             if(result.matchedCount === 0){
                 throw new Error('Produto não encontado no banco de dados');
             }
-            return { ...result, id: result._id.toString() };
+            return { ...result, id: result._id.toString()};
         },
 
         uploadProductImage: async (_: any, { id, base64Image }: any, { db, user }: any) => {
@@ -443,24 +444,6 @@ export const resolvers = {
                 ...updatedSession,
                 id: updatedSession._id.toString()
             };
- /*
-            const newSubtotal = session.subtotal + orderTotal;
-
-            await db.collection('table_sesions').findOneAndUpdate(
-                {_id: new ObjectId(session._id)},
-                {
-                    $push: {orders: newOrder},
-                    $set: {subtotal: newSubtotal}
-                }
-            );            
-
-            const updatedSession = await db.collection('table_sessions').findOne({ _id: session._id});
-
-            return {
-                ...updatedSession,
-                id: updatedSession._id.toString()
-            }
-*/
         },  
 
         // Fechar a mesa e Gerar a Pré-Nota de Conferência

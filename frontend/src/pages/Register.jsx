@@ -9,7 +9,7 @@ export function Register() {
     const [registerUser, {loading}] = useMutation(REGISTER_MUTATION);
     const navigate = useNavigate();
     
-    const { userRole } = useQuery(GET_ME);
+    const { data: userData } = useQuery(GET_ME);
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
@@ -31,7 +31,7 @@ export function Register() {
         <input type="email" placeholder="E-mail" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setFormData({...formData, email: e.target.value})} />
         <input type="password" placeholder="Senha" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setFormData({...formData, password: e.target.value})} />
         <select className="w-full bg-gray-800 p-3 rounded-xl text-gray-400" onChange={e => setFormData({...formData, role: e.target.value})}>
-          {userRole?.me?.role === 'ADMIN' ?(
+          {userData?.me?.role === 'ADMIN' ?(
             <>
               <option value="CLIENTE">Cliente (Fazer Pedidos)</option>
               <option value="EMPRESA">Empresa (Gerenciar Pizzaria)</option>

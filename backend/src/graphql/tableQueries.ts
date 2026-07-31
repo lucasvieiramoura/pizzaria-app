@@ -43,6 +43,17 @@ export const LIST_ORDERS = gql`
     }
 `;
 
+export const GET_ALL_TABLES = gql`
+  query GetAllTables {
+    getAllTables {
+      id
+      number
+      capacity
+      status
+    }
+  }
+`;
+
 export const GET_TABLE_SESSION = gql`
     query GetTableSessions($table_number: Int!) {
         getTableSessions(table_number: $table_number) {
@@ -84,14 +95,15 @@ export const REGISTER_MUTATION = gql`
 `;
 
 export const CREATE_PRODUCT = gql`
-  mutation Create ($name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!) {
-    createProduct(name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id }
+  mutation Create ($name: String!, $category: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!) {
+    createProduct(name: $name, category: $category, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id }
   }
 `;
 
 export const UPDATE_PRODUCT = gql`
-  mutation UpdateProduct($id: ID!, $name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!, $foto_url: String){
-    updateProduct(id: $id, name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients, foto_url: $foto_url) { id name price stock_quantity }
+  mutation UpdateProduct($id: ID!, $name: String!, $category: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!, $foto_url: String){
+    updateProduct(id: $id, name: $name, category: $category, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients, foto_url: $foto_url) 
+    { id name category price stock_quantity }
   }
 `;
 export const UPDATE_ORDER_STATUS = gql`
@@ -107,6 +119,23 @@ export const UPLOAD_PRODUCT_IMAGE = gql`
             foto_url
         }
     }
+`;
+
+export const CREATE_TABLE = gql`
+  mutation CreateTable($number: Int!, $capacity: Int) {
+    createTable(number: $number, capacity: $capacity) {
+      id
+      number
+      capacity
+      status
+    }
+  }
+`;
+
+export const DELETE_TABLE = gql`
+  mutation DeleteTable($number: Int!) {
+    deleteTable(number: $number)
+  }
 `;
 
 export const ADD_ITEM_TO_TABLE = gql `

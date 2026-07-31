@@ -142,6 +142,7 @@ export default function App() {
         </Route>
       
         <Route element={<AuthGuard />}>
+          <Route path="/admin/mesa" element={<AdminTables />} />
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/pedidos" element={<AdminOrders />} />
         </Route>
