@@ -15,6 +15,34 @@ export const GET_ME = gql`
     }
 `;
 
+export const LIST_PRODUCTS = gql`
+    query ListProducts($search: String) {
+        listProducts(search: $search) { 
+        id 
+        name 
+        price 
+        stock_quantity 
+        ingredients 
+        foto_url
+        }
+    }
+`;
+
+export const LIST_ORDERS = gql`
+    query ListOrders {
+        listOrders {
+            id
+            total
+            status
+            items {
+                product_id
+                name
+                quantity
+            }
+        }
+    }
+`;
+
 export const GET_TABLE_SESSION = gql`
     query GetTableSessions($table_number: Int!) {
         getTableSessions(table_number: $table_number) {
@@ -24,8 +52,10 @@ export const GET_TABLE_SESSION = gql`
             subtotal
             orders {
                 id
+                client_id
                 status
                 total
+                created_by
                 items {
                     name
                     quantity
@@ -35,7 +65,6 @@ export const GET_TABLE_SESSION = gql`
         }
     }
 `;
-
 export const REGISTER_MUTATION = gql`
   mutation Register(
     $name: String!, 
@@ -52,6 +81,32 @@ export const REGISTER_MUTATION = gql`
       address: $address
     )
   }
+`;
+
+export const CREATE_PRODUCT = gql`
+  mutation Create ($name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!) {
+    createProduct(name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id }
+  }
+`;
+
+export const UPDATE_PRODUCT = gql`
+  mutation UpdateProduct($id: ID!, $name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!, $foto_url: String){
+    updateProduct(id: $id, name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients, foto_url: $foto_url) { id name price stock_quantity }
+  }
+`;
+export const UPDATE_ORDER_STATUS = gql`
+    mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!){
+        updateOrderStatus(orderId: $orderId, status: $status)
+    }
+`;
+
+export const UPLOAD_PRODUCT_IMAGE = gql`
+    mutation UploadProductImage($id: ID!, $base64Image: String!){
+        uploadProductImage(id: $id, base64Image: $base64Image){
+            id
+            foto_url
+        }
+    }
 `;
 
 export const ADD_ITEM_TO_TABLE = gql `
@@ -73,10 +128,10 @@ export const ADD_ITEM_TO_TABLE = gql `
 
 export const CLOSE_TABLE_SESSION = gql `
     mutation CloseTableSession($table_number: Int!) {
-        closeTableSessions(table_number: $table_number) {
+        closeTableSession(table_number: $table_number) {
             table_number
             total_amount
-            close_at
+            closed_at
             items_summary {
                 name
                 total_quantity

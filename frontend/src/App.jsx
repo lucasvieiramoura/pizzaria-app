@@ -13,7 +13,7 @@ import { Cart } from './pages/Cart';
 import { OrderStatus } from './pages/OrderStatus';
 import { Profile } from './pages/Profile';
 import { AdminOrders } from './pages/AdminOrders';
-import { AuthGuard } from './components/AuthGuard';;
+import { AuthAtendente, AuthGuard } from './components/AuthGuard';;
 import { CustomerOrders } from './pages/CustomerOrders';
 import {AdminTables} from './pages/AdminTables';
 import {TableOrderPage} from './pages/TableOrderPage';
@@ -135,10 +135,13 @@ export default function App() {
         <Route path="/status/:id" element={<OrderStatus />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/mesa/:tableNumber" element={<TableOrderPage />} />
-      
+        
         {/** Rotas protegidas pelo */}
-        <Route element={<AuthGuard />}>
+        <Route element={<AuthAtendente />}>
           <Route path="/admin/mesa" element={<AdminTables />} />
+        </Route>
+      
+        <Route element={<AuthGuard />}>
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/pedidos" element={<AdminOrders />} />
         </Route>

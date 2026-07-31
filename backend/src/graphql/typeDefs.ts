@@ -23,6 +23,7 @@ export const typeDefs = gql`
         LIVRE
         OCUPADA
         AGUARDANDO_PAGAMENTO
+        ENCERRADA
     }
 
     type User {
@@ -59,10 +60,11 @@ export const typeDefs = gql`
         id: ID!
         client_id: ID!
         items: [CartItem!]! 
-        total_price: Float!
+        total: Float!
         status: OrderStatus!
         payment_id: String
         driver_location: Location
+        created_by: ID!
         created_at: String!
     }
 
@@ -115,7 +117,7 @@ export const typeDefs = gql`
         customerOrders: [Order!]!
 
         getActiveTableSessions: [TableSession!]!
-        getTableSession(table_number: Int!): TableSession
+        getTableSessions(table_number: Int!): TableSession
         getAllTables: [Table!]!
         
         getDashboardOrders: [Order!]!

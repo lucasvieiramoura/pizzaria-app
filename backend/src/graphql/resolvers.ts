@@ -90,11 +90,24 @@ export const resolvers = {
         getActiveTableSessions: async(_ : any, __ : any, {db} : any) =>{
             return await db.collection('table_sessions').find({status: { $ne : 'LIVRE'}}).toArray();
         },
-        getTableSession: async (_ : any, {table_number} : any, { db } : any) =>{
-            return await db.colleciton('table_sessions').findOne({
+        getTableSessions: async (_ : any, {table_number} : any, { db } : any) =>{
+            const session =  await db.collection('table_sessions').findOne({
                 table_number,
                 status: { $in : ['OCUPADA','AGUARDANDO_PAGAMENTO']}
             });
+            
+            // 2. Se não houver sessão ativa para essa mesa, retorna null
+            if (!session) return null;
+
+            // 3. Retorna o objeto individual com o id convertido e orders tratados
+            return {
+                ...session,
+                id: session._id.toString(),
+                orders: (session.orders || []).map((order: any) => ({
+                ...order,
+                id: order.id || order._id?.toString() || new Date().getTime().toString()
+                }))
+            };
         },     
         getAllTables: async (_ :any, __ : any, { db, user } : any) => {
             const tables = await db.collection('tables').find().sort({ number: 1 }).toArray();
@@ -317,12 +330,17 @@ export const resolvers = {
             };
 
             const result = await db.collection('table_sessions').insertOne(newSession);
-            return { id: result.insertId, ...newSession};
+            return { _id: new ObjectId(result.insertId), ...newSession};
         },
 
         addItemToTable: async(_ : any, { table_number, items } : any , { db, user} : any) =>{
-            if(!user || (user.role !== 'ATENDENTE' && user.role !== 'ADMIN')){
+            if(!user || (user.role !== 'ATENDENTE' && user.role !== 'EMPRESA' && user.role !== 'ADMIN')){
                 throw new Error('Acesso negado: Apenas atendentes autorizados podem lançar pedidos');
+            }
+
+            const tableExists = await db.collection('tables').findOne({ number: table_number});
+            if(!tableExists){
+                throw new Error(`A Mesa ${table_number} não está cadastrada no sistema`);
             }
 
             let session = await db.collection('table_sessions').findOne({
@@ -340,26 +358,70 @@ export const resolvers = {
                     created_at: new Date().toISOString()
                 };
                 const res = await db.collection('table_sessions').insertOne(newSession);
-                session = { id: res.insertedId, ...newSession};
+                session = { _id: res.insertedId, ...newSession};
+
+                await db.collection('tables').updateOne(
+                    {number: table_number},
+                    { $set: { status: 'OCUPADA' }}
+                );
             }
 
-            const productIds = items.map((i: { product_id: any; }) => i.product_id);
-            const products = await db.collection('products').find({ _id: { $id: productIds}}).toArray();
+            const productObjectIds = items.map((i: { product_id: any; }) => new ObjectId(i.product_id));
+            const products = await db.collection('products').find({ _id: { $in: productObjectIds}}).toArray();
 
-            let OrderTotal = 0;
+            let orderTotal = 0;
             const orderItems = items.map((item: { product_id: any; quantity: number; }) => {
-                const product = products.find((p: { _id: { toString: () => any; }; }) => p._id.toString() === item.product_id);
+                const product = products.find((p : { _id: { toString: () => any; }; }) => p?._id?.toString() === item.product_id);
+
+                if(!product){
+                    throw new Error(`Produto não encontado no banco para o ID: ${item.product_id}`);
+                }
+
                 const itemTotal = product.price * item.quantity;
-                OrderTotal += itemTotal;
+                orderTotal += itemTotal;
 
                 return {
-                    product_id: items.product_id,
+                    product_id: product._id,
                     name: product.name,
                     quantity: item.quantity,
                     price: product.price
                 };
             });
              
+            const mesaId = await db.collection('tables').findOne({ number : table_number});
+
+            const newOrder = {
+                id: new Date().getTime().toString(),
+                client_id: new ObjectId(mesaId._id),
+                items: orderItems,
+                total: orderTotal,
+                status: "PENDING",
+                created_by: new ObjectId(user._id),
+                created_at: new Date().toISOString()
+            };
+
+            const newSubtotal = (session.subtotal || 0) + orderTotal;
+
+            // 7. PERSISTÊNCIA NO BANCO (Update no MongoDB)
+            // Garanta o filtro usando new ObjectId(session._id)
+            const targetSessionId = typeof session._id === 'string' ? new ObjectId(session._id) : session._id;
+
+            const updateResult = await db.collection('table_sessions').updateOne(
+                { _id: targetSessionId },
+                {
+                $push: { orders: newOrder } as any,
+                $set: { subtotal: newSubtotal }
+                }
+            );
+
+            // 8. Busca a sessão atualizada para retornar ao GraphQL
+            const updatedSession = await db.collection('table_sessions').findOne({ _id: targetSessionId });
+
+            if (!updatedSession) {
+                throw new Error("Erro ao carregar os dados atualizados da sessão.");
+            }
+
+            
             // 1. Verificação de Estoque Atômica
             for (const item of items) {
                 const product = await db.collection('products').findOne({ _id: new ObjectId(item.product_id) });
@@ -376,25 +438,29 @@ export const resolvers = {
                 );
             }
 
-            const newOrder = {
-                client_id: new ObjectId(user.id),
-                items: items,
-                total: OrderTotal,
-                status: "PENDING",
-                created_at: new Date().toISOString()
+
+            return {
+                ...updatedSession,
+                id: updatedSession._id.toString()
             };
+ /*
+            const newSubtotal = session.subtotal + orderTotal;
 
-            const newSubtotal = session.subtotal + OrderTotal;
-
-            await db.collection('table_sesions').updateOne(
-                {_id: session._id},
+            await db.collection('table_sesions').findOneAndUpdate(
+                {_id: new ObjectId(session._id)},
                 {
                     $push: {orders: newOrder},
                     $set: {subtotal: newSubtotal}
                 }
-            );
+            );            
 
-            return await db.collection('table_sessions').findOne({ _id: session._id});
+            const updatedSession = await db.collection('table_sessions').findOne({ _id: session._id});
+
+            return {
+                ...updatedSession,
+                id: updatedSession._id.toString()
+            }
+*/
         },  
 
         // Fechar a mesa e Gerar a Pré-Nota de Conferência
@@ -431,11 +497,16 @@ export const resolvers = {
                 {_id: session._id},
                 {
                     $set:{
-                        status: 'LIVRE',
+                        status: 'ENCERRADA',
                         closed_at: closedAt,
                         closed_by: closedBy
                     }
                 }
+            );
+
+            await db.collection('tables').updateOne(
+                { number: table_number },
+                { $set: { status: 'LIVRE' } }
             );
 
             return {

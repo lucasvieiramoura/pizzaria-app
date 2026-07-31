@@ -8,8 +8,8 @@ import ReceiptModal from '../components/ReceiptModal';
 export function TableOrderPage() {
   const { tableNumber } = useParams();
   const numMesa = parseInt(tableNumber);
-  const { userRole } = useQuery(GET_ME);
-  const isStaff = userRole?.me?.role === 'ATENDENTE' || userRole?.me?.role === 'EMPRESA' || userRole?.me?.role === 'ADMIN';
+  const { data: userData } = useQuery(GET_ME);
+  const isStaff = userData?.me?.role === 'ATENDENTE' || userData?.me?.role === 'EMPRESA' || userData?.me?.role === 'ADMIN';
 
   const [cart, setCart] = useState([]);
   const [receiptData, setReceiptData] = useState(null);
@@ -23,7 +23,7 @@ export function TableOrderPage() {
   const [addItemToTable] = useMutation(ADD_ITEM_TO_TABLE);
   const [closeTable] = useMutation(CLOSE_TABLE_SESSION);
 
-  const session = data?.getTableSession;
+  const session = data?.getTableSessions;
 
   // Enviar os itens selecionados para a cozinha/bar
   const handleSendOrder = async () => {

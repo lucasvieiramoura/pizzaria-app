@@ -1,32 +1,7 @@
-import { gql } from '@apollo/client/core';
+
 import { useQuery, useMutation } from '@apollo/client/react';
 
-const LIST_ORDERS = gql`
-    query ListOrders {
-        listOrders {
-            id
-            total_price
-            status
-            items {
-                product_id
-                name
-                quantity
-            }
-        }
-    }
-`;
-
-const LIST_PRODUCTS = gql`
-    query ListProducts {
-        listProducts { id name price stock_quantity ingredients}
-    }
-`;
-
-const UPDATE_ORDER_STATUS = gql`
-    mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!){
-        updateOrderStatus(orderId: $orderId, status: $status)
-    }
-`;
+import { LIST_PRODUCTS, LIST_ORDERS, UPDATE_ORDER_STATUS } from '../../../backend/src/graphql/tableQueries';
 
 export function AdminOrders() {
     const {data, loading, error, refetch } = useQuery(LIST_ORDERS, {
@@ -113,7 +88,7 @@ export function AdminOrders() {
                             </div>
 
                             <div className='text-right text-sm'>
-                                Total: <span className='text-green-400 font-bold'>R$ {order.total_price.toFixed(2)}</span>
+                                Total: <span className='text-green-400 font-bold'>R$ {order.total.toFixed(2)}</span>
                             </div>
                         </div>
                             {/* Controles de Status */}

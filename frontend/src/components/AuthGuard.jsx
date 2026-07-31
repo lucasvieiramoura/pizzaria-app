@@ -36,3 +36,27 @@ export function AuthGuard() {
 
     return <Outlet />;
 }
+
+export function AuthAtendente() {
+    const token = localStorage.getItem('@PizzaToken');
+    const { data, loading } = useQuery(GET_ME, { skip: !token});
+
+
+    if(!token) {
+        return <Navigate to="/login" replace/>;
+    }
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white text-sm">
+                <div className="animate-pulse">Verificando permissões...</div>
+            </div>
+        );
+    }
+
+    if(data?.me.role !== 'ATENDENTE') {
+       return <Navigate to="/" replace/>;
+    }
+
+    return <Outlet />;
+}

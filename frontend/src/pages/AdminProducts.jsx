@@ -1,38 +1,12 @@
 import { useState } from "react";
-import { gql } from '@apollo/client/core';
 import { useMutation, useQuery } from '@apollo/client/react';
+
+import { LIST_PRODUCTS,CREATE_PRODUCT,UPDATE_PRODUCT, UPLOAD_PRODUCT_IMAGE } from '../../../backend/src/graphql/tableQueries';
 
 const API_URL_FOTO =  
 import.meta.env.MODE ===  'production' 
   ? 'https://pizzaria-app-k4j2.onrender.com'
   : 'http://localhost:4000' ;
-
-const LIST_PRODUCTS = gql` 
-  query List { 
-    listProducts { id name price stock_quantity foto_url ingredients }
-  }
-`;
-
-const CREATE_PRODUCT = gql`
-  mutation Create ($name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!) {
-    createProduct(name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id }
-  }
-`;
-
-const UPDATE_PRODUCT = gql`
-  mutation UpdateProduct($id: ID!, $name: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!, $foto_url: String){
-    updateProduct(id: $id, name: $name, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients, foto_url: $foto_url) { id name price stock_quantity }
-  }
-`;
-
-const UPLOAD_PRODUCT_IMAGE = gql`
-    mutation UploadProductImage($id: ID!, $base64Image: String!){
-        uploadProductImage(id: $id, base64Image: $base64Image){
-            id
-            foto_url
-        }
-    }
-`;
 
 export function AdminProducts() {
     const { data, loading, error, refetch } = useQuery(LIST_PRODUCTS);
