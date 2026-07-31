@@ -1,29 +1,15 @@
 import { useState } from "react";
-import { gql } from '@apollo/client/core';
-import { useMutation } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 
-const REGISTER_MUTATION = gql`
-  mutation Register(
-    $name: String!, 
-    $email: String!, 
-    $password: String!, 
-    $role: Role!,
-    $address: AddressInput!
-  ) {
-    registerUser(    
-      name: $name, 
-      email: $email, 
-      password_hash: $password, 
-      role: $role, 
-      address: $address
-    )
-  }
-`;
+import {GET_ME, REGISTER_MUTATION} from '../../../backend/src/graphql/tableQueries';
+
 export function Register() {
     const [formData, setFormData] = useState({name:'', email:'', password: '', role: 'CLIENTE', cep: '', street: '', number: ''});
     const [registerUser, {loading}] = useMutation(REGISTER_MUTATION);
     const navigate = useNavigate();
+    
+    const { userRole } = useQuery(GET_ME);
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
@@ -45,9 +31,15 @@ export function Register() {
         <input type="email" placeholder="E-mail" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setFormData({...formData, email: e.target.value})} />
         <input type="password" placeholder="Senha" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setFormData({...formData, password: e.target.value})} />
         <select className="w-full bg-gray-800 p-3 rounded-xl text-gray-400" onChange={e => setFormData({...formData, role: e.target.value})}>
-          <option value="CLIENTE">Cliente (Fazer Pedidos)</option>
-          <option value="EMPRESA">Empresa (Gerenciar Pizzaria)</option>
-          <option value="ENTREGADOR">Entregador</option>
+          {userRole?.me?.role === 'ADMIN' ?(
+            <>
+              <option value="CLIENTE">Cliente (Fazer Pedidos)</option>
+              <option value="EMPRESA">Empresa (Gerenciar Pizzaria)</option>
+              <option value="ATENDENTE">Atendente (Gerenciar Pedidos)</option><option value="ENTREGADOR">Entregador</option>
+            </>
+          )  : (
+            <option value="CLIENTE">Cliente (Fazer Pedidos)</option>
+          )}
         </select>
         <div className="grid grid-cols-3 gap-2">
           <input type="text" placeholder="CEP" required className="bg-gray-800 p-3 rounded-xl col-span-1" onChange={e => setFormData({...formData, cep: e.target.value})} />

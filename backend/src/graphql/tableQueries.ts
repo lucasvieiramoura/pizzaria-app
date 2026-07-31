@@ -1,5 +1,20 @@
 import { gql } from 'graphql-tag';
 
+export const GET_ME = gql`
+    query GetMe { 
+    me {
+        name 
+        email 
+        role 
+        address {
+          cep 
+          street 
+          number 
+          }
+      }
+    }
+`;
+
 export const GET_TABLE_SESSION = gql`
     query GetTableSessions($table_number: Int!) {
         getTableSessions(table_number: $table_number) {
@@ -19,6 +34,24 @@ export const GET_TABLE_SESSION = gql`
             }
         }
     }
+`;
+
+export const REGISTER_MUTATION = gql`
+  mutation Register(
+    $name: String!, 
+    $email: String!, 
+    $password: String!, 
+    $role: Role!,
+    $address: AddressInput!
+  ) {
+    registerUser(    
+      name: $name, 
+      email: $email, 
+      password_hash: $password, 
+      role: $role, 
+      address: $address
+    )
+  }
 `;
 
 export const ADD_ITEM_TO_TABLE = gql `

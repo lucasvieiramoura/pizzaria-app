@@ -1,6 +1,10 @@
 // src/App.jsx
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+
+import { gql } from '@apollo/client/core';
+import { useQuery } from '@apollo/client/react';
+
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Home } from './pages/Home';
@@ -13,12 +17,6 @@ import { AuthGuard } from './components/AuthGuard';;
 import { CustomerOrders } from './pages/CustomerOrders';
 import {AdminTables} from './pages/AdminTables';
 import {TableOrderPage} from './pages/TableOrderPage';
-
-
-
-import { gql } from '@apollo/client/core';
-import { useQuery } from '@apollo/client/react';
-
 
 const GET_ME = gql`
     query GetMe { 
@@ -104,7 +102,7 @@ export default function App() {
               </span>
             )}
           </Link>
-          {hasToken === '' ? (
+          {data?.me?.name === undefined ? (
           <Link to="/login" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
             👤 {data?.me?.name || "Login"}
           </Link>

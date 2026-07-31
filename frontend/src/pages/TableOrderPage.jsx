@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
 import { useQuery } from '@apollo/client/react';
-import { GET_TABLE_SESSION, ADD_ITEM_TO_TABLE, CLOSE_TABLE_SESSION } from '../../../backend/src/graphql/tableQueries';
+import {GET_ME, GET_TABLE_SESSION, ADD_ITEM_TO_TABLE, CLOSE_TABLE_SESSION } from '../../../backend/src/graphql/tableQueries';
 import ReceiptModal from '../components/ReceiptModal';
 
 export function TableOrderPage() {
   const { tableNumber } = useParams();
   const numMesa = parseInt(tableNumber);
+  const { userRole } = useQuery(GET_ME);
+  const isStaff = userRole?.me?.role === 'ATENDENTE' || userRole?.me?.role === 'EMPRESA' || userRole?.me?.role === 'ADMIN';
 
   const [cart, setCart] = useState([]);
   const [receiptData, setReceiptData] = useState(null);
@@ -74,13 +76,15 @@ export function TableOrderPage() {
           <span className="text-xs uppercase text-amber-500 font-bold tracking-wider">Atendimento Local</span>
           <h1 className="text-2xl font-black">Mesa {numMesa}</h1>
         </div>
-        <button
+        {isStaff && (
+          <button
           onClick={handleCloseSession}
           disabled={!session || session.subtotal === 0}
           className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg transition"
-        >
-          🧾 Fechar Conta
-        </button>
+          >
+            🧾 Fechar Conta
+          </button>
+      )}
       </div>
 
       {/* Resumo da Comanda Atual (Itens já pedidos) */}
@@ -121,14 +125,22 @@ export function TableOrderPage() {
         <div className="fixed bottom-4 left-4 right-4 max-w-4xl mx-auto bg-amber-500 text-slate-950 p-4 rounded-xl shadow-2xl flex justify-between items-center z-40">
           <div>
             <p className="font-bold">{cart.reduce((acc, i) => acc + i.quantity, 0)} itens selecionados</p>
-            <p className="text-xs font-semibold">Prontos para disparar para a cozinha</p>
+            <p className="text-xs font-semibold">
+              {isStaff ? 'Lançamento autorizado por Atendente' : 'Solicite ao garçom para confirmar o envio'}
+            </p>
           </div>
-          <button
-            onClick={handleSendOrder}
-            className="bg-slate-950 hover:bg-black text-amber-400 font-extrabold py-2 px-6 rounded-lg transition"
-          >
-            Enviar Pedido 🚀
-          </button>
+          {isStaff ? (
+            <button
+              onClick={handleSendOrder}
+              className="bg-slate-950 hover:bg-black text-amber-400 font-extrabold py-2 px-6 rounded-lg transition"
+            >
+              Disparar para a Cozinha 🚀
+            </button>
+          ) : (
+            <span className="text-xs font-bold uppercase bg-slate-950/20 px-3 py-2 rounded">
+              Aguardando Garçom
+            </span>
+          )}
         </div>
       )}
 

@@ -321,6 +321,10 @@ export const resolvers = {
         },
 
         addItemToTable: async(_ : any, { table_number, items } : any , { db, user} : any) =>{
+            if(!user || (user.role !== 'ATENDENTE' && user.role !== 'ADMIN')){
+                throw new Error('Acesso negado: Apenas atendentes autorizados podem lançar pedidos');
+            }
+
             let session = await db.collection('table_sessions').findOne({
                 table_number,
                 status: 'OCUPADA'
