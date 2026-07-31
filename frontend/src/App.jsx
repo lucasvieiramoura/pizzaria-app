@@ -11,6 +11,10 @@ import { Profile } from './pages/Profile';
 import { AdminOrders } from './pages/AdminOrders';
 import { AuthGuard } from './components/AuthGuard';;
 import { CustomerOrders } from './pages/CustomerOrders';
+import {AdminTables} from './pages/AdminTables';
+import {TableOrderPage} from './pages/TableOrderPage';
+
+
 
 import { gql } from '@apollo/client/core';
 import { useQuery } from '@apollo/client/react';
@@ -33,7 +37,7 @@ const GET_ME = gql`
 
 export default function App() {
   const [cart, setCart] = useState([]);
-  const hasToken = !!localStorage.getItem('@PizzaToken');
+  const hasToken = localStorage.getItem('@PizzaToken');
   const { data } = useQuery(GET_ME);
 
   const addToCart = (product) => {
@@ -74,9 +78,16 @@ export default function App() {
             <Link to="/home" className="text-gray-300 hover:text-orange-500 transition-colors">
               Cardápio
             </Link>
-            <Link to="/meus-pedidos" className="text-gray-300 hover:text-orange-500 transition-colors">
-              Meus Pedidos
+            {data?.me?.role === 'ADMIN' && (
+            <Link to="/admin/pedidos" className="text-gray-300 hover:text-orange-500 transition-colors">
+              Pedidos
             </Link>
+             )}
+             {data?.me?.role === 'CLIENTE' && (
+            <Link to="/meus-pedidos" className="text-gray-300 hover:text-orange-500 transition-colors">
+              Pedidos
+            </Link>
+             )}
             {data?.me?.role === 'ADMIN' && (
               <Link to="/admin/products" className="text-orange-400 hover:text-orange-300 transition-colors bg-orange-500/10 px-3 py-1.5 rounded-lg border border-orange-500/20">
                 🛠️ Painel Estoque
@@ -93,11 +104,17 @@ export default function App() {
               </span>
             )}
           </Link>
-
-          <Link to="/profile" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
-            👤 {data?.me?.name || "Minha Conta"}
+          {hasToken === '' ? (
+          <Link to="/login" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
+            👤 {data?.me?.name || "Login"}
           </Link>
-
+          ):(
+          <Link to="/profile" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
+            👤 {'Olá, '+data?.me?.name || "Minha Conta" }
+          </Link>
+          )
+          
+          }
           <button 
             onClick={() => { localStorage.clear(); window.location.href = '/login'; }} 
             className="text-red-400 hover:text-red-300 text-xs font-bold bg-red-500/10 hover:bg-red-500/20 px-3 py-2 rounded-xl transition-colors"
@@ -119,9 +136,11 @@ export default function App() {
         <Route path="/cart" element={<Cart cartItems={cart} clearCart={clearCart} userAddress={data?.me?.address}/>} />
         <Route path="/status/:id" element={<OrderStatus />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/mesa/:tableNumber" element={<TableOrderPage />} />
       
         {/** Rotas protegidas pelo */}
         <Route element={<AuthGuard />}>
+          <Route path="/admin/mesa" element={<AdminTables />} />
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/pedidos" element={<AdminOrders />} />
         </Route>

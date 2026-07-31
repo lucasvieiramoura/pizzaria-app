@@ -4,6 +4,7 @@ export const typeDefs = gql`
     enum Role {
         ADMIN
         EMPRESA
+        ATENDENTE
         CLIENTE
         ENTREGADOR
     }
@@ -16,6 +17,12 @@ export const typeDefs = gql`
         DELIVERING
         DELIVERED
         CANCELED
+    }
+
+    enum TableStatus {
+        LIVRE
+        OCUPADA
+        AGUARDANDO_PAGAMENTO
     }
 
     type User {
@@ -51,7 +58,7 @@ export const typeDefs = gql`
     type Order {
         id: ID!
         client_id: ID!
-        items: [CartItem!]!
+        items: [CartItem!]! 
         total_price: Float!
         status: OrderStatus!
         payment_id: String
@@ -59,7 +66,7 @@ export const typeDefs = gql`
         created_at: String!
     }
 
-    type CartItem{
+    type CartItem {
         product_id: ID!
         name: String
         price: Float
@@ -69,6 +76,25 @@ export const typeDefs = gql`
     input CartItemInput {
         product_id: ID!
         quantity: Int!
+    }
+
+    type TableSession {
+        id: ID!
+        table_number: Int!
+        status: TableStatus!
+        orders: [Order!]!
+        subtotal: Float!
+        created_by: String!
+        created_at: String!
+        closed_at: String
+        closed_by: String
+    }
+
+    type Table {
+    id: ID!
+    number: Int!
+    capacity: Int
+    status: TableStatus!
     }
 
     input AddressInput{
@@ -87,6 +113,11 @@ export const typeDefs = gql`
         trackOrder(id: ID!): Order!
         listOrders: [Order!]!
         customerOrders: [Order!]!
+
+        getActiveTableSessions: [TableSession!]!
+        getTableSession(table_number: Int!): TableSession
+        getAllTables: [Table!]!
+        
         getDashboardOrders: [Order!]!
         getDashboardMetrics: DashboardMetrics!
     }
@@ -108,5 +139,27 @@ export const typeDefs = gql`
         checkoutOrder(items: [CartItemInput!]!, total_price: Float!): Order!
         updateDriverLocation(orderId: ID!, lat: Float!, long: Float!): String!
         updateOrderStatus(orderId: ID!, status: OrderStatus!): String!
+
+        openTableSession(table_number: Int!): TableSession!
+        addItemToTable(table_number: Int!, items: [CartItemInput!]!) : TableSession!
+        closeTableSession(table_number: Int!) : TableSessionReceipt!
+        createTable(number: Int!, capacity: Int): Table!
+        deleteTable(number: Int!): Boolean!
+        
     }
+
+    type TableSessionReceipt {
+        table_number: Int!
+        items_summary: [OrderItemSummary!]!
+        total_amount: Float!
+        closed_at: String!
+    }
+
+    type OrderItemSummary {
+        name: String!
+        total_quantity: Int!
+        unit_price: Float!
+        total_price: Float!
+    }
+
 `;

@@ -86,6 +86,20 @@ export const resolvers = {
                 id: order._id.toString()
             }));
         },
+
+        getActiveTableSessions: async(_ : any, __ : any, {db} : any) =>{
+            return await db.collection('table_sessions').find({status: { $ne : 'LIVRE'}}).toArray();
+        },
+        getTableSession: async (_ : any, {table_number} : any, { db } : any) =>{
+            return await db.colleciton('table_sessions').findOne({
+                table_number,
+                status: { $in : ['OCUPADA','AGUARDANDO_PAGAMENTO']}
+            });
+        },     
+        getAllTables: async (_ :any, __ : any, { db, user } : any) => {
+            return await db.collection('tables').find().sort({ number: 1 }).toArray();
+        },
+
         getDashboardOrders: async (_: any, __: any, {db, user}: any ) =>{
             if(!user || !['ADMIN','EMPRESA'].includes(user.role)) throw new ForbiddenError("Não autorizado");
             return await db.collection('orders').find().toArray();
@@ -278,7 +292,172 @@ export const resolvers = {
                 throw new Error('Pedido não encontrado');
             }            
             return status;
+        },
+
+        openTableSession: async (_ : any, { table_number } : any, { db , user } : any) =>{
+            const activeSession = await db.collection('table_sessions').findOne({
+                table_number,
+                status: { $in: ['OCUPADA','AGUARDANDO_PAGAMENTO']}
+            });
+
+            if(activeSession) throw new Error(`A mesa ${table_number} já está ocupada!`);
+
+            const newSession = {
+                table_number,
+                status: 'OCUPADA',
+                orders: [],
+                subtotal: 0.0,
+                created_by: user.id,
+                created_at: new Date().toISOString()
+            };
+
+            const result = await db.collection('table_sessions').insertOne(newSession);
+            return { id: result.insertId, ...newSession};
+        },
+
+        addItemToTable: async(_ : any, { table_number, items } : any , { db, user} : any) =>{
+            let session = await db.collection('table_sessions').findOne({
+                table_number,
+                status: 'OCUPADA'
+            });
+
+            if(!session){
+                const newSession = {
+                    table_number,
+                    status: 'OCUPADA',
+                    orders: [],
+                    subtotal: 0.0,
+                    created_by: user.id,
+                    created_at: new Date().toISOString()
+                };
+                const res = await db.collection('table_sessions').insertOne(newSession);
+                session = { id: res.insertedId, ...newSession};
+            }
+
+            const productIds = items.map((i: { product_id: any; }) => i.product_id);
+            const products = await db.collection('products').find({ _id: { $id: productIds}}).toArray();
+
+            let OrderTotal = 0;
+            const orderItems = items.map((item: { product_id: any; quantity: number; }) => {
+                const product = products.find((p: { _id: { toString: () => any; }; }) => p._id.toString() === item.product_id);
+                const itemTotal = product.price * item.quantity;
+                OrderTotal += itemTotal;
+
+                return {
+                    product_id: items.product_id,
+                    name: product.name,
+                    quantity: item.quantity,
+                    price: product.price
+                };
+            });
+             
+            // 1. Verificação de Estoque Atômica
+            for (const item of items) {
+                const product = await db.collection('products').findOne({ _id: new ObjectId(item.product_id) });
+                if(!product || product.stock_quantity < item.quantity) {
+                    throw new Error(`Estoque insuficeinte do item: ${product?.name || 'Desconhecido'}`);
+                }  
+            }
+
+            // 2. Transação de Débito de Estoque
+            for (const item of items) {
+                await db.collection('products').updateOne(
+                    { _id: new ObjectId(item.product_id) },
+                    { $inc: { stock_quantity: -item.quantity } }
+                );
+            }
+
+            const newOrder = {
+                client_id: new ObjectId(user.id),
+                items: items,
+                total: OrderTotal,
+                status: "PENDING",
+                created_at: new Date().toISOString()
+            };
+
+            const newSubtotal = session.subtotal + OrderTotal;
+
+            await db.collection('table_sesions').updateOne(
+                {_id: session._id},
+                {
+                    $push: {orders: newOrder},
+                    $set: {subtotal: newSubtotal}
+                }
+            );
+
+            return await db.collection('table_sessions').findOne({ _id: session._id});
+        },  
+
+        // Fechar a mesa e Gerar a Pré-Nota de Conferência
+        closeTableSession: async (_ : any, {table_number} : any, {db, user} : any) =>{
+            const session = await db.collection('table_sessions').findOne({
+                table_number,
+                status: { $in: ['OCUPADA','AGUARDANDO_PAGAMENTO']}
+            });
+
+            if(!session) throw new Error(`Nenhuma conta aberta para a mesa ${table_number}`);
+
+            // Agrupa todos os itens repetidos de vários pedidos em um resumo único para a nota
+            const summaryMap : Record<string, any> = {};;
+            session.orders.forEach((order: { items: any[]; }) => {
+                order.items.forEach( item =>{
+                    if (!summaryMap[item.name]){
+                        summaryMap[item.name] = {
+                            name: item.name,
+                            total_quantity: 0,
+                            unit_price: item.price,
+                            total_price: 0
+                        };
+                    }
+                    summaryMap[item.name].total_quantity += item.quantity;
+                    summaryMap[item.name].total_price += item.price * item.quantity;
+                });
+            });
+
+            const itemsSummary = Object.values(summaryMap);
+            const closedAt = new Date().toString();
+            const closedBy = user.id;
+
+            await db.collection('table_sessions').updateOne(
+                {_id: session._id},
+                {
+                    $set:{
+                        status: 'LIVRE',
+                        closed_at: closedAt,
+                        closed_by: closedBy
+                    }
+                }
+            );
+
+            return {
+                table_number,
+                items_summary: itemsSummary,
+                total_amount: session.subtotal,
+                closed_at: closedAt
+            };
+        },
+
+        createTable: async (_ :any, { number, capacity } : any, { db, user } :any) => {
+            const exists = await db.collection('tables').findOne({ number });
+            if (exists) throw new Error(`A mesa ${number} já está cadastrada!`);
+
+            const newTable = {
+                number,
+                capacity: capacity || 4,
+                status: 'LIVRE',
+                created_at: new Date().toISOString()
+            };
+
+            const result = await db.collection('tables').insertOne(newTable);
+            return { id: result.insertedId, ...newTable };
+            },
+
+            // Remover mesa
+            deleteTable: async (_ : any, { number } : any, { db,user } : any) => {
+            const result = await db.collection('tables').deleteOne({ number });
+            return result.deletedCount > 0;
         }
+
     },
     Product: {
         id: (parent: { _id: any }) => parent._id
