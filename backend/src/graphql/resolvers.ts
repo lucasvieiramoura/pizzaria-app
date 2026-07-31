@@ -97,7 +97,12 @@ export const resolvers = {
             });
         },     
         getAllTables: async (_ :any, __ : any, { db, user } : any) => {
-            return await db.collection('tables').find().sort({ number: 1 }).toArray();
+            const tables = await db.collection('tables').find().sort({ number: 1 }).toArray();
+
+            return tables.map((table:any) =>({
+                ...table,
+                id: table._id.toString()
+            }));
         },
 
         getDashboardOrders: async (_: any, __: any, {db, user}: any ) =>{

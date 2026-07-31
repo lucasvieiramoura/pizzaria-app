@@ -31,6 +31,11 @@ const DELETE_TABLE = gql`
   }
 `;
 
+const API_URL =  
+import.meta.env.MODE ===  'production' 
+  ? 'https://pizzaria-app-k4j2.onrender.com'
+  : 'http://localhost:4000' ;
+
 export function AdminTables() {
   const [tableNumber, setTableNumber] = useState('');
   const [capacity, setCapacity] = useState('4');
@@ -129,7 +134,7 @@ export function AdminTables() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {tables.map((table) => {
-                const qrUrl = `https://pizzaria-app-k4j2.onrender.com/mesa/${table.number}`;
+                const qrUrl = `${API_URL}/mesa/${table.number}`;
 
                 return (
                   <div
