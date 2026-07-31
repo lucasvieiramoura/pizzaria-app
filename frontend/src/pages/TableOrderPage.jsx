@@ -67,7 +67,7 @@ export function TableOrderPage() {
   if (loading) return <div className="p-8 text-center text-white">Carregando comanda da mesa...</div>;
 
   return (
-    <div className="min-h-screen bg-[#131722] text-white p-4 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#131722] text-white p-4 mx-auto">
       {/* Header com destaque do Número da Mesa */}
       <div className="flex justify-between items-center bg-[#1f2937] p-4 rounded-xl border border-gray-700 mb-6">
         <div>

@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function ReceiptModal({ receipt, onClose }) {
   if (!receipt) return null;
 

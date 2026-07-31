@@ -74,7 +74,7 @@ export function AdminTables() {
   const tables = data?.getAllTables || [];
 
   return (
-    <div className="min-h-screen bg-[#131722] text-white p-6 max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#131722] text-white p-6 mx-auto">
       <h1 className="text-3xl font-black mb-6 border-b border-gray-800 pb-3">
         🪑 Gestão e Cadastro de Mesas
       </h1>

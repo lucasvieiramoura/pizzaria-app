@@ -38,7 +38,7 @@ export function Profile () {
     };
 
     return (
-        <div className='min-h-screen bg-gray-950 text-white p-6 max-w-md mx-auto'>
+        <div className='min-h-screen bg-gray-950 text-white p-6 mx-auto'>
             <h2 className='text-2xl font-bold text-orange-500 mb-6'>Meu Perfil</h2>
             <div className='bg-gray-900 p-6 roudend-2xl border border-gray-800 mb-6 text-sm space-y-2'>
                 <p><strong className="text-gray-400">E-mail fixo:</strong> {data?.me.email}</p>

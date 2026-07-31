@@ -63,7 +63,7 @@ export function CustomerOrders() {
     if(ordersError) return <div className='p-6 text-red-500 text-center'>Erro: {ordersError.message}</div>;
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white p-6 max-w-4xl mx-auto">
+        <div className="min-h-screen bg-gray-950 text-white p-6 mx-auto">
             <header className="mb-8 border-b border-gray-800 pb-4">
                 <h1 className="text-3xl font-bold text-orange-500">Meus Pedidos 📝</h1>
                 <p className="text-sm text-gray-400">Acompanhe suas pizzas em tempo real</p>

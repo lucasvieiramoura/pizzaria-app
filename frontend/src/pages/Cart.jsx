@@ -82,7 +82,7 @@ export function Cart({ cartItems =[], clearCart, userAddress}){
     const isFormValid = cartItems.length > 0 && number.trim() !== '' && !loadingCep ;
 
     return (
-        <div className='min-h-screen bg-gray-950 text-white p-6 max-w-2xl mx-auto'>
+        <div className='min-h-screen bg-gray-950 text-white p-6 mx-auto'>
             <h2 className='text-2xl font-black text-orange-500 mb-6'>Seu Carinho</h2>
             {cartItems.length === 0 ? (
             <div className="text-center text-gray-500 py-12">
