@@ -38,6 +38,9 @@ export default function App() {
   const hasToken = localStorage.getItem('@PizzaToken');
   const { data } = useQuery(GET_ME);
 
+  const isStaff = data?.me.role === 'ATENDENTE' || data?.me.role === 'EMPRESA';
+  const isStaffAdmin = data?.me.role === 'EMPRESA'|| data?.me.role === 'ADMIN';
+
   const addToCart = (product) => {
     setCart((prevCart) => {
       const existing = prevCart.find(item => item.id === product.id);
@@ -76,10 +79,15 @@ export default function App() {
             <Link to="/home" className="text-gray-300 hover:text-orange-500 transition-colors">
               Cardápio
             </Link>
-            {data?.me?.role === 'ADMIN' && (
-            <Link to="/admin/pedidos" className="text-gray-300 hover:text-orange-500 transition-colors">
-              Pedidos
-            </Link>
+            {isStaff || isStaffAdmin && (
+              <>
+              <Link to="/admin/mesa" className="text-gray-300 hover:text-orange-500 transition-colors">
+                Mesas
+              </Link>            
+              <Link to="/admin/pedidos" className="text-gray-300 hover:text-orange-500 transition-colors">
+                Pedidos
+              </Link>
+            </>
              )}
              {data?.me?.role === 'CLIENTE' && (
             <Link to="/meus-pedidos" className="text-gray-300 hover:text-orange-500 transition-colors">
@@ -94,22 +102,31 @@ export default function App() {
           </div>
 
           <div className="flex gap-4 items-center">
-          <Link to="/cart" className="relative bg-gray-800 hover:bg-gray-700 text-white px-3.5 py-2 rounded-xl transition-colors flex items-center gap-2">
-            <span>🛒 Carrinho</span>
-            {cart.length > 0 && (
-              <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full animate-bounce">
-                {cart.reduce((total, item) => total + item.quantity, 0)}
-              </span>
+            {data?.me?.role === 'CLIENTE' && (
+              <Link to="/cart" className="relative bg-gray-800 hover:bg-gray-700 text-white px-3.5 py-2 rounded-xl transition-colors flex items-center gap-2">
+                <span>🛒 Carrinho</span>
+                {cart.length > 0 && (
+                  <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full animate-bounce">
+                    {cart.reduce((total, item) => total + item.quantity, 0)}
+                  </span>
+                )}
+              </Link>
             )}
-          </Link>
           {data?.me?.name === undefined ? (
           <Link to="/login" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
             👤 {data?.me?.name || "Login"}
           </Link>
           ):(
-          <Link to="/profile" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
-            👤 {'Olá, '+data?.me?.name || "Minha Conta" }
-          </Link>
+          <>
+            {isStaffAdmin && (
+              <Link to="/register" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
+                📝 {"Cadastrar Conta" }
+              </Link>
+             )}
+            <Link to="/profile" className="text-gray-300 hover:text-white transition-colors border-l border-gray-800 pl-4">
+              👤 {'Olá, '+data?.me?.name || "Minha Conta" }
+            </Link>
+          </>
           )
           
           }
@@ -142,7 +159,7 @@ export default function App() {
         </Route>
       
         <Route element={<AuthGuard />}>
-          <Route path="/admin/mesa" element={<AdminTables />} />
+          //<Route path="/admin/mesa" element={<AdminTables />} />
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/pedidos" element={<AdminOrders />} />
         </Route>

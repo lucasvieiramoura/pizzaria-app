@@ -20,6 +20,7 @@ export const LIST_PRODUCTS = gql`
         listProducts(search: $search) { 
         id 
         name 
+        category
         price 
         stock_quantity 
         ingredients 
@@ -95,13 +96,13 @@ export const REGISTER_MUTATION = gql`
 `;
 
 export const CREATE_PRODUCT = gql`
-  mutation Create ($name: String!, $category: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!) {
+  mutation Create ($name: String!, $category: ProductCategory!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!) {
     createProduct(name: $name, category: $category, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients) { id }
   }
 `;
 
 export const UPDATE_PRODUCT = gql`
-  mutation UpdateProduct($id: ID!, $name: String!, $category: String!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!, $foto_url: String){
+  mutation UpdateProduct($id: ID!, $name: String!, $category: ProductCategory!, $price: Float!, $stock_quantity: Int!, $ingredients: [String!]!, $foto_url: String){
     updateProduct(id: $id, name: $name, category: $category, price: $price, stock_quantity: $stock_quantity, ingredients: $ingredients, foto_url: $foto_url) 
     { id name category price stock_quantity }
   }

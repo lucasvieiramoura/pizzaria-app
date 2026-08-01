@@ -21,7 +21,7 @@ export function AdminProducts() {
     const [editingProductId, setEditingProductId] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
-        category:'PIZZA',
+        category:'',
         price: '',
         stock_quantity: '',
         ingredients: '',
@@ -46,8 +46,7 @@ export function AdminProducts() {
                 await updateProduct({                    
                     variables: {
                         id: editingProductId,
-                        category: formData.category,
-                        foto_url: currentFormImgSource,
+                        foto_url: currentFormImgSource,                        
                         ...payload
                     }
                     
@@ -65,8 +64,7 @@ export function AdminProducts() {
             setFormData({ name: '', category:'', price: '', stock_quantity: '', ingredients: '', foto_url:'' });
             refetch(); // Garante a atualização da lista
         } catch (err) {
-            console.error('Erro na operação', err);
-            alert('Erro: ' + err.message);
+            alert(`Erro: ${err.message}`);
         }
     };
 
@@ -186,14 +184,13 @@ export function AdminProducts() {
                 <div className="form-group">
                     <label>Categoria do produto</label>
                     <select 
-                        className="w-full bg-gray-800 p-3 rounded-xl text-gray-400" 
+                        className="w-full bg-gray-800 p-3 rounded-xl text-gray-400"                         
+                        // placeholder="Pizza" 
                         value={formData.category}                        
                         onChange={e => setFormData({...formData, category: e.target.value})}>
-                            <option value=""></option>
                             <option value="PIZZA">Pizza</option>
                             <option value="BEBIDA">Bebida</option>
                             <option value="SOBREMESA">Sobremesa</option>
-
                         </select>
                 </div>
 
@@ -265,6 +262,11 @@ export function AdminProducts() {
                             <p>Selecione um produto cadastrado abaixo para alterar ou adicionar uma foto.</p>
 
                             <div className="hidden-uploader-wrapper">
+                                <img 
+                                src={imagePreview || currentFormImgSource}
+                                alt="Preview" 
+                                style={{ width: '100%', maxHeight: '120px', objectFit: 'contain', marginBottom: '0.75rem', borderRadius: '8px' }} 
+                                /> 
                                 <input 
                                 type="file" 
                                 id={`file-pizza-${editingProductId}`}
@@ -284,11 +286,12 @@ export function AdminProducts() {
                     )}
                 </div>
                 
+                {base64String ? (
                 <button type="submit" className="btn-primary" >
                     { editingProductId ? 'Salvar Alterações' : 'Cadastrar Produto'}
                 </button>
-                {base64String && (
-                <button type="submit" className="btn-primary" >
+                ) : (
+                    <button type="submit" className="btn-primary" >
                     { editingProductId ? 'Salvar Alterações' : 'Cadastrar Produto'}
                 </button>
                 )}
@@ -345,6 +348,8 @@ export function AdminProducts() {
                                     <span className="card-price">R$ {Number(p.price).toFixed(2)}</span>
                                 </div>
                                 
+                                <span className="category-badge" style={{backgroundColor: '#fffdfd'}}>{p.category}</span>
+                                 
                                 <p className="card-description">
                                     {p.ingredients || 'Nenhum ingrediente informado.'}
                                 </p>

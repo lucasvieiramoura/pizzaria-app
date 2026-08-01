@@ -41,7 +41,7 @@ export function AuthAtendente() {
     const token = localStorage.getItem('@PizzaToken');
     const { data, loading } = useQuery(GET_ME, { skip: !token});
 
-    const isStaff = data?.me.role === 'ATENDENTE' || data?.me.role === 'EMPRESA'  || data?.me.role === 'ADMIN' ;
+    const isStaff = data?.me.role === 'ATENDENTE' || data?.me.role === 'EMPRESA'|| data?.me.role === 'ADMIN';
 
     if(!token) {
         return <Navigate to="/login" replace/>;
