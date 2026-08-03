@@ -113,6 +113,11 @@ export const typeDefs = gql`
         lat: Float
         long: Float
     }
+    
+    type AuthPayload {
+        token: String!
+        user: User! 
+    }
 
     # Operaçãoes de Leitura (Substiu os GETs)
     type Query {
@@ -155,6 +160,7 @@ export const typeDefs = gql`
         createTable(number: Int!, capacity: Int): Table!
         deleteTable(number: Int!): Boolean!
         
+        googleLogin(idToken: String!): AuthPayload!
     }
 
     type TableSessionReceipt {

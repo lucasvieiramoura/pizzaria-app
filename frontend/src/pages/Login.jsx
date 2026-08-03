@@ -1,18 +1,16 @@
 import { useState } from 'react';
-import { gql } from '@apollo/client/core';
 import { useMutation } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 
-const LOGIN_MUTATION = gql`
-    mutation Login($email: String!, $password: String!) {
-        loginUser(email: $email, password_hash: $password)
-    }
-`;
+import { LOGIN_MUTATION, GOOGLE_LOGIN_MUTATION } from '../../../backend/src/graphql/tableQueries';
 
 export function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loginUser] = useMutation(LOGIN_MUTATION);
+    const [googleLogin] = useMutation(GOOGLE_LOGIN_MUTATION);
+
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -23,6 +21,20 @@ export function Login() {
             navigate('/home');
             window.location.reload();
         } catch (errr) {alert(errr.message)}
+    };
+
+     const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            const { credential } = credentialResponse;
+            
+            const { data } = await googleLogin({ variables: { idToken: credential } });
+
+            localStorage.setItem('@PizzaToken', data.googleLogin.token);
+            window.location.href = '/home';
+        } catch (error) {
+            console.error("Erro ao fazer login com o Google:", error);
+            alert("Erro ao fazer login com o Google. Tente novamente.");
+        }
     };
 
      const handleRegister= async (e) => {
@@ -41,6 +53,19 @@ export function Login() {
                 <input type="password" placeholder="Sua senha" required className="w-full bg-gray-800 p-3 rounded-xl" onChange={e => setPassword(e.target.value)} />
                 <button type="submit" className="w-full bg-orange-600 font-bold p-3 rounded-xl hover:bg-orange-500">Entrar</button>
                 <button onClick={handleRegister} type="button" className="w-full bg-green-600 font-bold p-3 rounded-xl hover:bg-green-500">Cadastre-se</button>
+                <div className="divider text-center">ou</div>
+
+                {/* Botão Oficial do Google */}
+                <div>
+                <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => console.log('Login com Google Falhou')}
+                    text="signup_with" // Exibe o texto "Inscrever-se com o Google"
+                    shape="rectangular"
+                    theme="filled_blue"
+                    className="p-3 rounded-xl"
+                />
+                </div>
             </form>
         </div>
     );

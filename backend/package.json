@@ -25,6 +25,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^4.17.1",
+    "google-auth-library": "^11.0.0",
     "graphql": "^16.14.2",
     "graphql-tag": "^2.12.7",
     "jsonwebtoken": "^9.0.3",

@@ -3,12 +3,14 @@ import { ObjectId, ReturnDocument } from "mongodb";
 import bcrypt  from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AuthenticationError, ForbiddenError } from 'apollo-server-errors';
+import { OAuth2Client } from "google-auth-library";
 
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import path from 'path';
 
 const SECRET_KEY = process.env.SECRET_KEY ?? '';
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 cloudinary.config({
     cloud_name:'seu_cloud_name',
@@ -155,6 +157,57 @@ export const resolvers = {
                 throw new AuthenticationError("E-mail ou senha inválidos");
             }
             return jwt.sign({ id: user._id, role: user.role },SECRET_KEY,{ expiresIn: '1h' });
+        },
+
+        googleLogin: async (_: any, { idToken } : any, { db } : any) => {
+            try 
+            {
+                const ticket = await googleClient.verifyIdToken({
+                    idToken,
+                    audience: process.env.GOOGLE_CLIENT_ID
+                });
+                const payload = ticket.getPayload();
+                if (!payload) throw new Error("Token do Google inválido");
+
+                const { email, name, picture, sub: googleId } = payload;
+
+                let user = await db.collection('users').findOne({ email });
+                if (!user) 
+                {
+                    const newUser = {
+                        name,
+                        email,
+                        password_hash: '', // Sem senha, login apenas via Google
+                        role: 'CLIENTE', // Definir um papel padrão para usuários do Google
+                        address: null // Endereço inicialmente nulo
+                    };
+                    const result = await db.collection('users').insertOne(newUser);
+
+                    user = {
+                        _id: result.insertedId,
+                        ...newUser
+                        };
+                }
+
+                const appToken = jwt.sign(
+                    {id: user._id.toString(), email: user.email, role: user.role},
+                    process.env.SECRET_KEY!,
+                    { expiresIn: '2h' }
+                );
+
+                return {
+                    token: appToken,
+                    user:{
+                        id: user._id.toString(),
+                        name: user.name,
+                        email: user.email,
+                        role: user.role,
+                    }
+                };
+            } catch (error: any) {
+                console.error("Erro no login do Google:", error);
+                throw new Error("Falha ao autenticar com o Google. Tente novamente.");
+            }
         },
 
         updateProfile: async (_: any, { name, address }: any, { db, user}: any) =>{
@@ -515,8 +568,7 @@ export const resolvers = {
             return { id: result.insertedId, ...newTable };
             },
 
-            // Remover mesa
-            deleteTable: async (_ : any, { number } : any, { db,user } : any) => {
+        deleteTable: async (_ : any, { number } : any, { db,user } : any) => {
             const result = await db.collection('tables').deleteOne({ number });
             return result.deletedCount > 0;
         }

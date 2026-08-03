@@ -77,6 +77,27 @@ export const GET_TABLE_SESSION = gql`
         }
     }
 `;
+
+export const LOGIN_MUTATION = gql`
+    mutation Login($email: String!, $password: String!) {
+        loginUser(email: $email, password_hash: $password)
+    }
+`;
+
+export const GOOGLE_LOGIN_MUTATION = gql`
+  mutation GoogleLogin($idToken: String!) {
+    googleLogin(idToken: $idToken) {
+      token
+      user {
+        id
+        name
+        email
+        role
+      }
+    }
+  }
+`;
+
 export const REGISTER_MUTATION = gql`
   mutation Register(
     $name: String!, 

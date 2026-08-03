@@ -5,6 +5,9 @@ import { setContext } from '@apollo/client/link/context';
 import App from './App';
 import React from 'react';
 import { CartProvider } from './context/CartContext';
+
+import {GoogleOAuthProvider} from '@react-oauth/google';
+
 import './index.css'; 
 
 const API_URL = 
@@ -16,6 +19,8 @@ import.meta.env.MODE ===  'production'
 const httpLink = createHttpLink({
   uri: API_URL,
 });
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 // Middleware para anexar o token JWT automaticamente em todo requisição do GraphQL
 const authLink = setContext((_, { headers }) => {
@@ -37,7 +42,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <CartProvider>
-        <App/>
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <App/>
+        </GoogleOAuthProvider>
       </CartProvider>
     </ApolloProvider>
   </React.StrictMode>
