@@ -150,7 +150,7 @@ export const typeDefs = gql`
         createProduct(name: String!, category: ProductCategory!,  price: Float!, stock_quantity: Int!, ingredients: [String!]!): Product!
         updateProduct(id: ID!, name: String, category: ProductCategory!, price: Float, stock_quantity: Int, ingredients: [String!]!, foto_url: String): Product!
         uploadProductImage(id: ID!, base64Image: String!) : Product!
-        checkoutOrder(items: [CartItemInput!]!, total_price: Float!): Order!
+        checkoutOrder(items: [CartItemInput!]!, total: Float!): Order!
         updateDriverLocation(orderId: ID!, lat: Float!, long: Float!): String!
         updateOrderStatus(orderId: ID!, status: OrderStatus!): String!
 

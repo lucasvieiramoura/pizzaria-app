@@ -1,19 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { gql } from '@apollo/client/core';
 import { useQuery } from '@apollo/client/react';
 
-const TRACK_ORDER = gql`
-    query Track($id: ID!) {
-        trackOrder(id: $id) {                
-            status
-            total_price
-            driver_location {
-                lat
-                long
-            }
-        }
-    }
-`;
+import { TRACK_ORDER } from '../../../backend/src/graphql/tableQueries';
+
  const translateStatus = (status) => {
         switch(status) {
             case 'PAID': return 'Pedido Recebido 💳';
@@ -29,9 +18,6 @@ export function OrderStatus() {
     const { data, loading} = useQuery(TRACK_ORDER, { variables: { id },  pollInterval: 5000});
   
     if (loading) return <div className='text-white p-8'>Sincronizando status...</div>;
-   //if (data == null ) return <div className='text-white p-8'>Data Vazio!</div>;    
-    //if (error) return <div className='text-red-500 p-8'>Erro: {error.message}</div>
-
 
     const order = data?.trackOrder;
     return (
@@ -42,7 +28,7 @@ export function OrderStatus() {
 
                 <div className='py-4'>
                     <p className='text-sm text-gray-400 mb-1'>Status Atual:  {translateStatus(order.status)}</p>
-                    <p className='text-sm text-gray-400 mb-1'>Total: R$ {order?.total_price.toFixed(2)}</p>
+                    <p className='text-sm text-gray-400 mb-1'>Total: R$ {order?.total.toFixed(2)}</p>
                 </div>
 
                 <div className='bg-gray-800 p-4 roudend-xl text-left text-sm text-gray-300'>

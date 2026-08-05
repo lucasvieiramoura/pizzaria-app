@@ -44,6 +44,41 @@ export const LIST_ORDERS = gql`
     }
 `;
 
+export const TRACK_ORDER = gql`
+    query Track($id: ID!) {
+        trackOrder(id: $id) {                
+            status
+            total
+            driver_location {
+                lat
+                long
+            }
+        }
+    }
+`;
+
+export const CHECKOUT_MUTATION = gql`
+    mutation Checkout($items: [CartItemInput!]!, $total: Float!){
+        checkoutOrder(items: $items, total: $total) {id}
+    }
+`;
+
+export const CUSTOMER_ORDERS = gql`
+    query CustomerOrders {
+        customerOrders {
+            id
+            total
+            client_id
+            status
+            created_at
+            items {
+                product_id
+                quantity
+            }
+        }
+    }
+`;
+
 export const GET_ALL_TABLES = gql`
   query GetAllTables {
     getAllTables {

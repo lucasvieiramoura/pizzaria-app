@@ -1,36 +1,8 @@
-import { gql } from '@apollo/client/core';
 import { useQuery } from '@apollo/client/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const LIST_PRODUCTS = gql`
-    query ListProducts($search: String) {
-        listProducts(search: $search) { 
-        id 
-        name 
-        price 
-        stock_quantity 
-        ingredients 
-        foto_url
-        }
-    }
-`;
-
-const CUSTOMER_ORDERS = gql`
-    query CustomerOrders {
-        customerOrders {
-            id
-            total_price
-            client_id
-            status
-            created_at
-            items {
-                product_id
-                quantity
-            }
-        }
-    }
-`;
+import { LIST_PRODUCTS, CUSTOMER_ORDERS } from '../../../backend/src/graphql/tableQueries';
 
 export function CustomerOrders() {
     const [searchTerm] = useState('');
@@ -100,7 +72,7 @@ export function CustomerOrders() {
                             {/* Direita: Status e Preço */}
                             <div className="flex justify-between items-center md:flex-col md:items-end md:justify-center gap-2 border-t border-gray-800 pt-3 md:border-none md:pt-0">
                                 <div className="text-sm">
-                                    Total: <span className="font-bold text-green-400">R$ {order.total_price.toFixed(2)}</span>
+                                    Total: <span className="font-bold text-green-400">R$ {order.total.toFixed(2)}</span>
                                 </div>
                                 <div className={`text-xs px-3 py-1.5 rounded-full font-bold border ${
                                     order.status === 'ENTREGUE' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20 animate-pulse'

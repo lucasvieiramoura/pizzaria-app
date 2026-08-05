@@ -1,13 +1,8 @@
-import { gql } from '@apollo/client/core';
 import { useMutation } from '@apollo/client/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const CHECKOUT_MUTATION = gql`
-    mutation Checkout($items: [CartItemInput!]!, $total: Float!){
-        checkoutOrder(items: $items, total_price: $total) {id}
-    }
-`;
+import { CHECKOUT_MUTATION } from '../../../backend/src/graphql/tableQueries';
 
 export function Cart({ cartItems =[], clearCart, userAddress}){
     const [checkoutOrder, {loading}] = useMutation(CHECKOUT_MUTATION);
@@ -179,25 +174,3 @@ export function Cart({ cartItems =[], clearCart, userAddress}){
         </div>
     );
 }
-
-//
-
-/*                      <div className='spcae-y-4'>
-                            {cartItems.map((item, i) => (
-                                <div key={i} className='flex justify-between bg-gray-900 p-4 rounded-xl border border-gray-800'>
-                                    <div>
-                                    <h4 className="font-bold">{item.name}</h4>
-                                    <p className="text-sm text-gray-400">Quantidade: {item.quantity}</p>
-                                </div>
-                                <span className="text-orange-400 font-bold">R$ {(item.price.toFixed(2) * item.quantity).toFixed(2)}</span>
-                                </div>
-                            ))}
-                            <div className="border-t border-gray-800 pt-4 flex justify-between text-xl font-bold">
-                                <span>Total:</span>
-                                <span className="text-green-400">R$ {total.toFixed(2)}</span>
-                            </div>
-                            <button onClick={handlePayment} disabled={ !isFormValid || loading} className="w-full mt-6 bg-green-600 p-4 rounded-xl font-black text-lg hover:bg-green-500 transition">
-                                {loading ? 'Processando Pagamento...' : 'Pagar Agora'}
-                            </button>
-                        </div>
-                            */

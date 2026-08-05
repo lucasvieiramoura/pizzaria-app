@@ -309,7 +309,7 @@ export const resolvers = {
 
         },
 
-        checkoutOrder: async (_: any, { items, total_price } : any, { db, user } : any) => { //verificar para usar payment_id
+        checkoutOrder: async (_: any, { items, total } : any, { db, user } : any) => { //verificar para usar payment_id
             checkAuth(user);
             verifyRole(user, ['CLIENTE']);
 
@@ -335,7 +335,7 @@ export const resolvers = {
             const newOrder = {
                 client_id: new ObjectId(user.id),
                 items,
-                total_price,
+                total,
                 status: "PAID",
                 payment_id,
                 driver_location: null,
