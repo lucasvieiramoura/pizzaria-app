@@ -35,7 +35,7 @@ export const resolvers = {
             return await db.collection('users').findOne({_id: new ObjectId(user.id)});
            
         },
-        listProducts:async (_ :  any, {search } :  {search?: string}, { db }:{ db: any}) => {
+        listProducts:async (_ :  any, {search, category} :  {search?: string, category?: string}, { db }:{ db: any}) => {
             try {
                 const query: any = {};
                 if(search) {
@@ -43,6 +43,9 @@ export const resolvers = {
                         {name: {$regex: search, $options: 'i'}},
                         {ingredients: { $regex: search, $options: 'i'}}
                     ];
+                }
+                if(category) {
+                    query.category = category;
                 }
                 const products = await db.collection('products').find(query).toArray();
                 

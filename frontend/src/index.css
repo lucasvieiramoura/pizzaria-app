@@ -17,6 +17,29 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #f97316;
 }
+/* Botão categorias como Aba */
+.category-tabs {
+  background-color: rgb(59 130 246 / 0.08);
+  border-bottom: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff
+}
+
+.category-btn.active {
+  border-color: #999;
+  border-bottom: 2px solid #f97316; 
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.category-btn:hover {
+  border-color: #374151;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease-in-out;
+}
 
 /* 🌟 Efeitos Globais de Cartão e Gradientes */
 .card-dark {

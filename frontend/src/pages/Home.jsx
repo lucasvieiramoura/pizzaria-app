@@ -10,9 +10,23 @@ import.meta.env.MODE ===  'production'
 
 export function Home({ addToCart }) {      
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('TODOS');
     const {data, loading, error } = useQuery(LIST_PRODUCTS, {
-        variables: { search: searchTerm},
+        variables: { search: searchTerm}
     });
+
+    const categories = [
+    { id: 'TODOS', label: '🍕 Todos' },
+    { id: 'PIZZA', label: '🍕 Pizzas' },
+    { id: 'BEBIDA', label: '🥤 Bebidas' },
+    { id: 'SOBREMESA', label: '🍰 Sobremesas' },
+  ];
+
+  const productsList = data?.listProducts || [];
+
+  const filteredProducts = selectedCategory === 'TODOS'
+    ? productsList
+    : productsList.filter(product => product.category?.toUpperCase() === selectedCategory);
 
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [tableNumberInput, setTableNumberInput] = useState('');
@@ -65,6 +79,17 @@ export function Home({ addToCart }) {
             <header className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-extrabold text-orange-500">Nosso Cardápio</h1>
                 {/* 🔍 Input de busca integrado */}
+                <div className="category-tabs">
+                    {categories.map((cat) => (
+                    <button
+                        key={cat.id}
+                        className={`category-btn ${selectedCategory === cat.id ? 'active' : ''} px-3` }
+                        onClick={() => setSelectedCategory(cat.id)}
+                    >
+                        {cat.label}
+                    </button>
+                    ))}
+                </div>
                 <div className="w-full md:w-80">
                     <input 
                         type="text" 
@@ -77,7 +102,7 @@ export function Home({ addToCart }) {
                 </div>
             </header>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {data.listProducts.map(product => {
+                {filteredProducts.map(product => {
                     product.foto_url?.replace('http://localhost:4000', 'https://pizzaria-app-k4j2.onrender.com')
                     const imgSource = product.foto_url ? `${API_URL_FOTO}${product.foto_url}` : 'https://placehold.co/400x300?text=Sem+Foto';      
                  
@@ -177,7 +202,7 @@ export function Home({ addToCart }) {
                     );
                 })}
             </div>
-            {data.listProducts.length === 0 && (
+            {filteredProducts.length === 0 && (
                 <div className="text-center text-gray-500 py-12">
                     Nenhuma pizza encontrada para "{searchTerm}".
                 </div>

@@ -16,7 +16,7 @@ export const GET_ME = gql`
 `;
 
 export const LIST_PRODUCTS = gql`
-    query ListProducts($search: String) {
+    query ListProducts($search: String ){
         listProducts(search: $search) { 
         id 
         name 
