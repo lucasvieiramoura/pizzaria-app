@@ -144,14 +144,17 @@ export function AdminTables() {
                             rel="noreferrer"
                             className="text-amber-400 hover:underline font-semibold"
                         >
-                            🔗 Abrir Link/QR
+                            🧾Abrir Conta da Mesa
                         </a>
-                        <button
-                            onClick={() => handleDeleteTable(table.number)}
-                            className="text-red-400 hover:text-red-300 font-semibold"
-                        >
-                            Excluir
-                        </button>
+
+                            {isStaffOrAdmin && (
+                            <button
+                                onClick={() => handleDeleteTable(table.number)}
+                                className="text-red-400 hover:text-red-300 font-semibold"
+                            >
+                                Excluir
+                             </button>
+                            )}
                         </div>
                     </div>
                     );

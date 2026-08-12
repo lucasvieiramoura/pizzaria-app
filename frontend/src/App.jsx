@@ -79,7 +79,7 @@ export default function App() {
             <Link to="/home" className="text-gray-300 hover:text-orange-500 transition-colors">
               Cardápio
             </Link>
-            {isStaff || isStaffAdmin && (
+            {isStaffAdmin && (
               <>
               <Link to="/admin/mesa" className="text-gray-300 hover:text-orange-500 transition-colors">
                 Mesas
@@ -87,6 +87,13 @@ export default function App() {
               <Link to="/admin/pedidos" className="text-gray-300 hover:text-orange-500 transition-colors">
                 Pedidos
               </Link>
+            </>
+             )}
+             {isStaff && (
+              <>
+              <Link to="/admin/mesa" className="text-gray-300 hover:text-orange-500 transition-colors">
+                Mesas
+              </Link>      
             </>
              )}
              {data?.me?.role === 'CLIENTE' && (
@@ -159,7 +166,7 @@ export default function App() {
         </Route>
       
         <Route element={<AuthGuard />}>
-          //<Route path="/admin/mesa" element={<AdminTables />} />
+          <Route path="/admin/mesa" element={<AdminTables />} />
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/pedidos" element={<AdminOrders />} />
         </Route>

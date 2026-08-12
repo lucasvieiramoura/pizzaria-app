@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate} from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
 import { useQuery } from '@apollo/client/react';
 import {GET_ME, GET_TABLE_SESSION, ADD_ITEM_TO_TABLE, CLOSE_TABLE_SESSION } from '../../../backend/src/graphql/tableQueries';
@@ -13,6 +13,7 @@ export function TableOrderPage() {
 
   const [cart, setCart] = useState([]);
   const [receiptData, setReceiptData] = useState(null);
+    const navigate = useNavigate();
 
   // Busca dados em tempo real da mesa
   const { data, loading, refetch } = useQuery(GET_TABLE_SESSION, {
@@ -49,6 +50,13 @@ export function TableOrderPage() {
       alert(`Erro ao lançar pedido: ${err.message}`);
     }
   };
+
+  const handleLinkMesa = async () => {
+        try {
+            navigate(`/admin/mesa`);
+            window.location.reload();
+        } catch (errr) {alert(errr.message)}
+    };
 
   // Solicitar o fechamento da conta da mesa
   const handleCloseSession = async () => {
@@ -92,9 +100,9 @@ export function TableOrderPage() {
         <h2 className="text-lg font-bold text-gray-200 mb-3 border-b border-gray-700 pb-2">
           Consumo da Mesa
         </h2>
-
         {!session || session.orders.length === 0 ? (
           <p className="text-gray-400 text-sm italic">Nenhum pedido realizado ainda nesta mesa.</p>
+
         ) : (
           <div className="space-y-4">
             {session.orders.map((order, idx) => (
@@ -111,13 +119,16 @@ export function TableOrderPage() {
                 ))}
               </div>
             ))}
-
             <div className="flex justify-between items-center pt-2 border-t border-gray-700 text-lg font-bold text-amber-400">
               <span>Subtotal Acumulado:</span>
               <span>R$ {session.subtotal.toFixed(2)}</span>
             </div>
           </div>
         )}
+
+          <button onClick={handleLinkMesa} className="mt-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 px-6 rounded-lg transition">
+            🪑 Volta para mesas
+          </button>
       </div>
 
       {/* Botão de envio caso existam itens no carrinho local */}
