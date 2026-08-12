@@ -36,6 +36,30 @@ export function AuthGuard() {
 
     return <Outlet />;
 }
+export function AuthGerente() {
+    const token = localStorage.getItem('@PizzaToken');
+    const { data, loading } = useQuery(GET_ME, { skip: !token});
+
+    const isStaff = data?.me.role === 'ATENDENTE' || data?.me.role === 'EMPRESA'|| data?.me.role === 'ADMIN';
+
+    if(!token) {
+        return <Navigate to="/login" replace/>;
+    }
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white text-sm">
+                <div className="animate-pulse">Verificando permissões...</div>
+            </div>
+        );
+    }
+
+    if(isStaff === false) {
+       return <Navigate to="/" replace/>;
+    }
+
+    return <Outlet />;
+}
 
 export function AuthAtendente() {
     const token = localStorage.getItem('@PizzaToken');

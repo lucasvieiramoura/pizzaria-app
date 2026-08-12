@@ -56,7 +56,10 @@ export function AdminProducts() {
                 alert('Produto atualizado com sucesso');
             } else {
                 await createProduct({
-                    variables: payload
+                    variables: {
+                        foto_url: currentFormImgSource,  
+                        ...payload
+                    }
                 });
                 alert('Produto criado com sucesso');
             }

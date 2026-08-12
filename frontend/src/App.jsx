@@ -13,7 +13,7 @@ import { Cart } from './pages/Cart';
 import { OrderStatus } from './pages/OrderStatus';
 import { Profile } from './pages/Profile';
 import { AdminOrders } from './pages/AdminOrders';
-import { AuthAtendente, AuthGuard } from './components/AuthGuard';;
+import { AuthAtendente, AuthGuard, AuthGerente } from './components/AuthGuard';;
 import { CustomerOrders } from './pages/CustomerOrders';
 import {AdminTables} from './pages/AdminTables';
 import {TableOrderPage} from './pages/TableOrderPage';
@@ -38,7 +38,7 @@ export default function App() {
   const hasToken = localStorage.getItem('@PizzaToken');
   const { data } = useQuery(GET_ME);
 
-  const isStaff = data?.me.role === 'ATENDENTE' || data?.me.role === 'EMPRESA';
+  const isStaff = data?.me.role === 'ATENDENTE';
   const isStaffAdmin = data?.me.role === 'EMPRESA'|| data?.me.role === 'ADMIN';
 
   const addToCart = (product) => {
@@ -101,7 +101,7 @@ export default function App() {
               Pedidos
             </Link>
              )}
-            {data?.me?.role === 'ADMIN' && (
+            {isStaffAdmin && (
               <Link to="/admin/products" className="text-orange-400 hover:text-orange-300 transition-colors bg-orange-500/10 px-3 py-1.5 rounded-lg border border-orange-500/20">
                 🛠️ Painel Estoque
               </Link>
@@ -162,7 +162,12 @@ export default function App() {
         
         {/** Rotas protegidas pelo */}
         <Route element={<AuthAtendente />}>
-          <Route path="/admin/mesa" element={<AdminTables />} />
+          <Route path="/admin/mesa" element={<AdminTables />} />          
+          <Route path="/admin/pedidos" element={<AdminOrders />} />
+        </Route>
+
+        <Route element={<AuthGerente />}>          
+          <Route path="/admin/products" element={<AdminProducts />} />
         </Route>
       
         <Route element={<AuthGuard />}>
