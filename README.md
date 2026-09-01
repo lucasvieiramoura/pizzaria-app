@@ -6,8 +6,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![Apollo](https://img.shields.io/badge/Apollo-4E6CF8?logo=apollographql&logoColor=white)] (https://www.apollographql.com/)
-[![GraphQL](https://img.shields.io/badge/GraphQL-E10098?logo=graphql&logoColor=white)] (https://graphql.org/)
+[![Apollo](https://img.shields.io/badge/Apollo-4E6CF8?logo=apollographql&logoColor=white)](https://www.apollographql.com/)
+[![GraphQL](https://img.shields.io/badge/GraphQL-E10098?logo=graphql&logoColor=white)](https://graphql.org/)
 [![MongoDB](https://img.shields.io/badge/-MongoDB-13aa52?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
@@ -37,27 +37,28 @@ Os fluxos visuais, navegação e capturas de tela vinculadas podem ser consultad
 
 ## 🏗️ Arquitetura do Projeto
 
-O projeto adota uma arquitetura full-stack moderna (**MERN Stack** — MongoDB, Express, Reac, Node.js) desacoplada em REST API (Backend) e Single Page Application (Frontend):
+O projeto adota uma arquitetura full-stack moderna (**MERN Stack** — MongoDB, Express, React, Node.js) desacoplada em REST API (Backend) e Single Page Application (Frontend):
 
-┌───────────────────────────────────────────────────┐
-│              CLIENTE (Browser / SPA)              │
-│                React + TypeScript                 │
-└───────────────────────┬───────────────────────────┘
-                        │
-                HTTP / REST API
-                        │
-┌───────────────────────▼───────────────────────────┐
-│                BACKEND (Node.js API)              │
-│         Express.js | AuthGuard | Interceptors     │
-└───────────────────────┬───────────────────────────┘
-                        │
-                    SQL Queries
-                        │
-┌───────────────────────▼───────────────────────────┐
-│               BANCO DE DADOS (NoSQL)              │
-│                     MongoDB                       │
-└───────────────────────────────────────────────────┘
-
+```text
+       ┌─────────────────────────────────────────────────────────┐
+       │                 CLIENTE (Browser / SPA)                 │
+       │                   Angular + TypeScript                  │
+       └──────────────────────────┬──────────────────────────────┘
+                                  │
+                          HTTP / REST API
+                                  │
+       ┌──────────────────────────▼──────────────────────────────┐
+       │                   BACKEND (Node.js API)                 │
+       │           Express.js | AuthGuard | Interceptors         │
+       └──────────────────────────┬──────────────────────────────┘
+                                  │
+                             SQL Queries
+                                  │
+       ┌──────────────────────────▼──────────────────────────────┐
+       │                  BANCO DE DADOS (NoSQL)                 │
+       │                        MongoDB                          │
+       └─────────────────────────────────────────────────────────┘
+```
 ### Principais Padrões Arquiteturais
 * **Frontend SPA (Single Page Application):** Desenvolvido em React com reativo do fluxo de dados e requisições assíncronas.
 * **Rotas Protegidas e Segurança:** Utilização de **AuthGuard** para controle de acessos por papel de usuário (Role-based access control) e **HTTP Interceptors** para anexação automática de tokens de autenticação nas requisições.
