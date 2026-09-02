@@ -42,7 +42,7 @@ O projeto adota uma arquitetura full-stack moderna (**MERN Stack** — MongoDB, 
 ```text
        ┌─────────────────────────────────────────────────────────┐
        │                 CLIENTE (Browser / SPA)                 │
-       │                   Angular + TypeScript                  │
+       │                   React + TypeScript                    │
        └──────────────────────────┬──────────────────────────────┘
                                   │
                           HTTP / REST API
@@ -105,7 +105,7 @@ O projeto adota uma arquitetura full-stack moderna (**MERN Stack** — MongoDB, 
 ### **Frontend**
 * **Framework:** [React](https://react.dev/)
 * **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
-* **Estilização:** [Tailwind CSS / HTML5] (Design escuro com tema customizado em tons *Dark/Orange*)
+* **Estilização:** [Tailwind CSS/HTML5](Design escuro com tema customizado em tons *Dark/Orange*)
 * **Programação Reativa:** [RxJS](https://rxjs.dev/)
 
 ### **Backend**
